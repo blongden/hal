@@ -37,4 +37,4 @@ Install from github manually, or use the nocarrier/hal project in composer[2]
 Nocarrier\Hal is licensed under the MIT license.
 
 [1] http://stateless.co/hal_specification.html
-
+[2] http://packagist.org/packages/nocarrier/hal
