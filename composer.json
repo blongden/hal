@@ -16,8 +16,8 @@
         "php": ">=5.3.0"
     },
     "autoload": {
-        "Nocarrier": {
-            "Hal": "src"
+        "psr-0": {
+            "Nocarrier": "src"
         }
     }
 }
