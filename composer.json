@@ -1,7 +1,7 @@
 {
     "name": "nocarrier/hal",
     "type": "library",
-    "descriprion": "application/hal builder / formatter for PHP 5.3+",
+    "description": "application/hal builder / formatter for PHP 5.3+",
     "keywords": ["hal", "xml", "json", "rest", "hypermedia"],
     "homepage": "https://github.com/blongden/hal",
     "license": "MIT",
