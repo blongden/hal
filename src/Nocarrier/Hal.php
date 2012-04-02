@@ -150,7 +150,7 @@ class Hal
      * @access public
      * @return string
      */
-    public function asJson($pretty=true)
+    public function asJson($pretty=false)
     {
         $data = $this->linksForJson($this->uri, $this->links);
 
