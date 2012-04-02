@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit colors="true" stopOnFailure="false" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true">
+    <testsuites>
+        <testsuite name="Nocarrier Hal Test Suite">
+            <directory>./tests/Hal/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
