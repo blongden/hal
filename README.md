@@ -10,11 +10,11 @@ Nocarrier\Hal requires PHP 5.3 or later.
 
 ```php
 <?php
-$hal = new Hal('/orders');
+$hal = new Nocarrier\Hal('/orders');
 $hal->addLink('next', '/orders?page=2');
 $hal->addLink('search', '/orders?id={order_id}');
 
-$resource = new HalResource(
+$resource = new Nocarrier\HalResource(
     '/orders/123',
     array(
         'total' => 30.00,
