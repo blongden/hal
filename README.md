@@ -24,6 +24,7 @@ $resource = new Nocarrier\HalResource(
 $resource->addLink('customer', '/customer/bob', 'Bob Jones <bob@jones.com>');
 $hal->addResource('order', $resource);
 echo $hal->asJson();
+echo $hal->asXml();
 ```
 
 ## Installation
