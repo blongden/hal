@@ -23,7 +23,7 @@ $resource = new HalResource(
 );
 $resource->addLink('customer', '/customer/bob', 'Bob Jones <bob@jones.com>');
 $hal->addResource('order', $resource);
-echo $h->asJson();
+echo $hal->asJson();
 ```
 
 ## Installation
