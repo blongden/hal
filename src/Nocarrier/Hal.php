@@ -75,7 +75,11 @@ class Hal
             $data = array_merge($data, $this->resourcesForJson($rel, $resources));
         }
 
-        return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $options = 0;
+        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+            $options = JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT;
+        }
+        return json_encode($data, $options);
     }
 
     protected function linksForXml($doc, $links)
