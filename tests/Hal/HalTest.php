@@ -87,4 +87,50 @@ class HalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('value1', $result->resource->field1);
         $this->assertEquals('value2', $result->resource->field2);
     }
+
+    public function testEmbeddedResourceInResourceJsonResponse()
+    {
+        $hal = new Hal('http://example.com/');
+        $res = new HalResource('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $res->addResource(
+            'item', 
+            new HalResource(
+                '/resource/1/item/1',
+                array(
+                    'itemField1' => 'itemValue1'
+                )
+            )
+        );
+
+        $hal->addResource('resource', $res);
+        $result = json_decode($hal->asJson());
+        $this->assertInternalType('array', $result->_embedded->resource[0]->_embedded->item);
+        $this->assertEquals('/resource/1/item/1', $result->_embedded->resource[0]->_embedded->item[0]->_links->self->href);
+        $this->assertEquals('itemValue1', $result->_embedded->resource[0]->_embedded->item[0]->itemField1);
+    }
+
+    public function testEmbeddedResourceInResourceXmlResponse()
+    {
+        $hal = new Hal('http://example.com/');
+        $res = new HalResource('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $res->addResource(
+            'item', 
+            new HalResource(
+                '/resource/1/item/1',
+                array(
+                    'items' => array(
+                        array(
+                            'itemField1' => 'itemValue1'
+                        )
+                    )
+                )
+            )
+        );
+
+        $hal->addResource('resource', $res);
+        $result = new \SimpleXmlElement($hal->asXml());
+        $this->assertEquals('item', $result->resource->resource->attributes()->rel);
+        $this->assertEquals('/resource/1/item/1', $result->resource->resource->attributes()->href);
+        $this->assertEquals('itemValue1', $result->resource->resource->items[0]->itemField1);
+    }
 }
