@@ -29,22 +29,22 @@ class HalTest extends \PHPUnit_Framework_TestCase
 {
     public function testHalResponseReturnsMinimalValidJson()
     {
-        $h = new Hal('http://example.com/');
-        $this->assertEquals('{"_links":{"self":{"href":"http:\/\/example.com\/"}}}', $h->asJson());
+        $hal = new Hal('http://example.com/');
+        $this->assertEquals('{"_links":{"self":{"href":"http:\/\/example.com\/"}}}', $hal->asJson());
     }
 
     public function testHalResponseReturnsMinimalValidXml()
     {
-        $h = new Hal('http://example.com/');
-        $this->assertEquals("<?xml version=\"1.0\"?>\n<resource href=\"http://example.com/\"/>\n", $h->asXml());
+        $hal = new Hal('http://example.com/');
+        $this->assertEquals("<?xml version=\"1.0\"?>\n<resource href=\"http://example.com/\"/>\n", $hal->asXml());
     }
 
     public function testAddLinkJsonResponse()
     {
-        $h = new Hal('http://example.com/');
-        $h->addLink('test', '/test/1', 'My Test');
+        $hal = new Hal('http://example.com/');
+        $hal->addLink('test', '/test/1', 'My Test');
 
-        $result = json_decode($h->asJson());
+        $result = json_decode($hal->asJson());
         $this->assertInstanceOf('StdClass', $result->_links->test);
         $this->assertEquals('/test/1', $result->_links->test->href);
         $this->assertEquals('My Test', $result->_links->test->title);
@@ -52,10 +52,10 @@ class HalTest extends \PHPUnit_Framework_TestCase
 
     public function testAddLinkXmlResponse()
     {
-        $h = new Hal('http://example.com/');
-        $h->addLink('test', '/test/1', 'My Test');
+        $hal = new Hal('http://example.com/');
+        $hal->addLink('test', '/test/1', 'My Test');
 
-        $result = new \SimpleXmlElement($h->asXml());
+        $result = new \SimpleXmlElement($hal->asXml());
         $data = $result->link->attributes();
         $this->assertEquals('test', $data['rel']);
         $this->assertEquals('/test/1', $data['href']);
@@ -64,11 +64,11 @@ class HalTest extends \PHPUnit_Framework_TestCase
 
     public function testResourceJsonResponse()
     {
-        $h = new Hal('http://example.com/');
-        $r = new HalResource('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
-        $h->addResource('resource', $r);
+        $hal = new Hal('http://example.com/');
+        $res = new HalResource('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $hal->addResource('resource', $res);
 
-        $resource = json_decode($h->asJson());
+        $resource = json_decode($hal->asJson());
         $this->assertInstanceOf('StdClass', $resource->_embedded);
         $this->assertInternalType('array', $resource->_embedded->resource);
         $this->assertEquals($resource->_embedded->resource[0]->_links->self->href, '/resource/1');
@@ -78,11 +78,11 @@ class HalTest extends \PHPUnit_Framework_TestCase
 
     public function testResourceXmlResponse()
     {
-        $h = new Hal('http://example.com/');
-        $r = new HalResource('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
-        $h->addResource('resource', $r);
+        $hal = new Hal('http://example.com/');
+        $res = new HalResource('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $hal->addResource('resource', $res);
 
-        $result = new \SimpleXmlElement($h->asXml());
+        $result = new \SimpleXmlElement($hal->asXml());
         $this->assertEquals('/resource/1', $result->resource->attributes()->href);
         $this->assertEquals('value1', $result->resource->field1);
         $this->assertEquals('value2', $result->resource->field2);
