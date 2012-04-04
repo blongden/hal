@@ -19,8 +19,16 @@ namespace Nocarrier;
  * @package Nocarrier
  * @author Ben Longden <ben@nocarrier.co.uk>
  */
-class HalResource extends Hal
+class HalResource
 {
+    /**
+     * uri
+     * 
+     * @var mixed
+     * @access public
+     */
+    protected $uri;
+
     /**
      * The data for this resource. An associative array of key value pairs.
      * array(
@@ -34,6 +42,22 @@ class HalResource extends Hal
     protected $data;
 
     /**
+     * resources
+     * 
+     * @var array
+     * @access public
+     */
+    protected $resources = array();
+
+    /**
+     * links
+     * 
+     * @var array
+     * @access public
+     */
+    protected $links = array();
+
+    /**
      * construct a new HalResource. Call the parent and store the additional data on the resource.
      *
      * @param mixed $uri
@@ -43,8 +67,30 @@ class HalResource extends Hal
      */
     public function __construct($uri, array $data = array())
     {
-        parent::__construct($uri);
+        $this->uri = $uri;
         $this->data = $data;
+    }
+    
+    public function addLink($rel, $uri, $title = null)
+    {
+        // TODO: validate uri
+        $this->links[$rel] = array(
+            'uri' => $uri,
+            'title' => $title
+        );
+    }
+
+    /**
+     * Add an embedded resource, identified by $rel and represented by $resource.
+     *
+     * @param mixed $rel
+     * @param HalResource $resource
+     * @access public
+     * @return void
+     */
+    public function addResource($rel, HalResource $resource)
+    {
+        $this->resources[$rel][] = $resource;
     }
 }
 

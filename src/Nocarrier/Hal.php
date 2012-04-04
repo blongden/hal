@@ -18,76 +18,8 @@ namespace Nocarrier;
  * @package Nocarrier
  * @author Ben Longden <ben@nocarrier.co.uk>
  */
-class Hal
+class Hal extends HalResource
 {
-    /**
-     * The URI of the current resource
-     *
-     * @var mixed
-     * @access protected
-     */
-    protected $uri;
-
-    /**
-     * Any related links
-     *
-     * @var mixed
-     * @access protected
-     */
-    protected $links = array();
-
-    /**
-     * An array of resources to be embedded in this representation
-     *
-     * @var mixed
-     * @access protected
-     */
-    protected $resources = array();
-
-    /**
-     * Construct a new Hal representation representing the resource found at $uri
-     *
-     * @param mixed $uri
-     * @access public
-     * @return void
-     */
-    public function __construct($uri)
-    {
-        // TODO: validate uri
-        $this->uri = $uri;
-    }
-
-    /**
-     * Add an associated link to the current resource, identified by $ref and found at $uri. $title is optional.
-     *
-     * @param mixed $rel
-     * @param mixed $uri
-     * @param mixed $title
-     * @access public
-     * @return void
-     */
-    public function addLink($rel, $uri, $title = null)
-    {
-        // TODO: validate uri
-        $this->links[$rel] = array(
-            'uri' => $uri,
-            'title' => $title
-        );
-    }
-
-    /**
-     * Add an embedded resource, identified by $rel and represented by $resource.
-     *
-     * @param mixed $rel
-     * @param HalResource $resource
-     * @access public
-     * @return void
-     */
-    public function addResource($rel, HalResource $resource)
-    {
-        $this->resources[$rel][] = $resource;
-    }
-
     /**
      * Return an array (compatible with the hal+json format) representing associated links
      *
@@ -186,6 +118,21 @@ class Hal
         }
     }
 
+    protected function array_to_xml($data, $element) {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                if (!is_numeric($key)) {
+                    $subnode = $element->addChild($key);
+                    $this->array_to_xml($value, $subnode);
+                } else{
+                    $this->array_to_xml($value, $element);
+                }
+            } else {
+                $element->addChild($key, $value);
+            }
+        }
+    }
+
     /**
      * resourcesForXml
      * Add resources in hal+xml format (identified by $rel) to a SimpleXmlElement object
@@ -209,18 +156,7 @@ class Hal
                 $this->resourcesForXml($element, $innerRel, $innerRes);
             }
 
-            foreach($resource->data as $key => $val) {
-                if (is_array($val)) {
-                    foreach($val as $v) {
-                        $item = $element->addChild($key);
-                        foreach($v as $k => $v) {
-                            $item->addChild($k, $v);
-                        }
-                    }
-                } else {
-                    $element->addChild($key, $val);
-                }
-            }
+            $this->array_to_xml($resource->data, $element);
         }
     }
 

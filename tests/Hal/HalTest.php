@@ -12,8 +12,8 @@
 
 namespace Nocarrier\Tests;
 
-require_once 'src/Nocarrier/Hal.php';
 require_once 'src/Nocarrier/HalResource.php';
+require_once 'src/Nocarrier/Hal.php';
 
 use \Nocarrier\Hal;
 use \Nocarrier\HalResource;
