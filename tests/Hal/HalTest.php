@@ -133,4 +133,36 @@ class HalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('/resource/1/item/1', $result->resource->resource->attributes()->href);
         $this->assertEquals('itemValue1', $result->resource->resource->items[0]->itemField1);
     }
+
+    public function testResourceWithListRendersCorrectlyInXmlResponse()
+    {
+        $hal = new Hal('/orders');
+        $hal->addLink('next', '/orders?page=2');
+        $hal->addLink('search', '/orders?id={order_id}');
+
+        $resource = new HalResource(
+            '/orders/123',
+            array(
+                'tests' => array(
+                    array(
+                        'total' => 30.00,
+                        'currency' => 'USD'
+                    ),
+                    array(
+                        'total' => 40.00,
+                        'currency' => 'GBP'
+                    )
+                )
+            )
+        );
+        $resource->addLink('customer', '/customer/bob', 'Bob Jones <bob@jones.com>');
+        $hal->addResource('order', $resource);
+
+        $result = new \SimpleXmlElement($hal->asXml());
+        $this->markTestIncomplete();
+        $this->assertEquals(30, $result->resource->tests[0]->total);
+        $this->assertEquals('USD', $result->resource->tests[0]->currency);
+        $this->assertEquals(40, $result->resource->tests[1]->total);
+        $this->assertEquals('GBP', $result->resource->tests[1]->currency);
+    }
 }
