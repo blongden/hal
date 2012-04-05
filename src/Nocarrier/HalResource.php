@@ -23,9 +23,8 @@ class HalResource
 {
     /**
      * uri
-     * 
+     *
      * @var mixed
-     * @access public
      */
     protected $uri;
 
@@ -37,23 +36,20 @@ class HalResource
      * )
      *
      * @var array
-     * @access protected
      */
     protected $data;
 
     /**
      * resources
-     * 
+     *
      * @var array
-     * @access public
      */
     protected $resources = array();
 
     /**
      * links
-     * 
+     *
      * @var array
-     * @access public
      */
     protected $links = array();
 
@@ -62,15 +58,21 @@ class HalResource
      *
      * @param mixed $uri
      * @param array $data
-     * @access public
-     * @return void
      */
     public function __construct($uri, array $data = array())
     {
         $this->uri = $uri;
         $this->data = $data;
     }
-    
+
+    /**
+     * Add a link to the resource, identified by $rel, located at $uri, with an
+     * optional $title
+     *
+     * @param string $rel
+     * @param string $uri
+     * @param string $title
+     */
     public function addLink($rel, $uri, $title = null)
     {
         // TODO: validate uri
@@ -85,12 +87,49 @@ class HalResource
      *
      * @param mixed $rel
      * @param HalResource $resource
-     * @access public
-     * @return void
      */
     public function addResource($rel, HalResource $resource)
     {
         $this->resources[$rel][] = $resource;
     }
-}
 
+    /**
+     * Get resource data
+     *
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Get resource links
+     *
+     * @return array
+     */
+    public function getLinks()
+    {
+        return $this->links;
+    }
+
+    /**
+     * Get embedded resources
+     *
+     * @return array
+     */
+    public function getResources()
+    {
+        return $this->resources;
+    }
+
+    /**
+     * Get resource's URI
+     *
+     * @return mixed
+     */
+    public function getUri()
+    {
+        return $this->uri;
+    }
+}

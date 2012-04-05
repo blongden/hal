@@ -24,23 +24,17 @@ class Hal extends HalResource
      * Return an array (compatible with the hal+json format) representing associated links
      *
      * @param mixed $uri
-     * @param mixed $links
-     * @access protected
+     * @param array $links
      * @return array
      */
     protected function linksForJson($uri, $links)
     {
-        $data = array(
-            "_links" => array(
-                "self" => array(
-                    "href" => $uri
-                )
-            )
-        );
+        $data = array('self' => array('href' => $uri));
+
         foreach($links as $rel => $link) {
-            $data['_links'][$rel] = array('href' => $link['uri']);
-            if (!is_null($link['title'])) { 
-                $data['_links'][$rel]['title'] = $link['title'];
+            $data[$rel] = array('href' => $link['uri']);
+            if (!is_null($link['title'])) {
+                $data[$rel]['title'] = $link['title'];
             }
         }
 
@@ -50,26 +44,34 @@ class Hal extends HalResource
     /**
      * Return an array (compatible with the hal+json format) representing associated resources
      *
-     * @param mixed $rel
      * @param mixed $resources
-     * @param array $data
-     * @access protected
      * @return array
      */
-    protected function resourcesForJson($rel, $resources, $data = array())
+    protected function resourcesForJson($resources)
     {
-        foreach($resources as $resource) {
-            $item = array_merge(
-                $this->linksForJson($resource->uri, $resource->links),
-                $resource->data
-            );
+        $data = array();
 
-            if (!empty($resource->resources)) {
-                foreach($resource->resources as $innerRel => $innerRes) {
-                    $item = $this->resourcesForJson($innerRel, $innerRes, $item);
-                }
-            }
-            $data['_embedded'][$rel][] = $item;
+        foreach ($resources as $resource) {
+            $data[] = $this->arrayForJson($resource);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Return an array (compatible with the hal+json format) representing the
+     * complete response
+     *
+     * @param HalResource $resource
+     * @return array
+     */
+    protected function arrayForJson(HalResource $resource)
+    {
+        $data = $resource->getData();
+        $data['_links'] = $this->linksForJson($resource->getUri(), $resource->getLinks());
+
+        foreach($resource->getResources() as $rel => $resources) {
+            $data['_embedded'][$rel] = $this->resourcesForJson($resources);
         }
 
         return $data;
@@ -79,22 +81,18 @@ class Hal extends HalResource
      * asJson
      * Return the current object in a application/hal+json format (links and resources)
      *
-     * @access public
+     * @param bool $pretty Enable pretty-printing
      * @return string
      */
     public function asJson($pretty=false)
     {
-        $data = $this->linksForJson($this->uri, $this->links);
-
-        foreach($this->resources as $rel => $resources) {
-            $data = array_merge($data, $this->resourcesForJson($rel, $resources));
-        }
-
         $options = 0;
+
         if (version_compare(PHP_VERSION, '5.4.0') >= 0 and $pretty) {
             $options = JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT;
         }
-        return json_encode($data, $options);
+
+        return json_encode($this->arrayForJson($this), $options);
     }
 
     /**
@@ -103,7 +101,6 @@ class Hal extends HalResource
      *
      * @param SimpleXmlElement $doc
      * @param array $links
-     * @access protected
      * @return void
      */
     protected function linksForXml(\SimpleXmlElement $doc, array $links)
@@ -118,6 +115,11 @@ class Hal extends HalResource
         }
     }
 
+    /**
+     *
+     * @param array $data
+     * @param \SimpleXmlElement $element
+     */
     protected function array_to_xml($data, $element) {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
@@ -140,8 +142,6 @@ class Hal extends HalResource
      * @param SimpleXmlElement $doc
      * @param mixed $rel
      * @param array $resources
-     * @access protected
-     * @return void
      */
     protected function resourcesForXml(\SimpleXmlElement $doc, $rel, array $resources)
     {
@@ -164,8 +164,8 @@ class Hal extends HalResource
      * asXml
      * Return the current object in a application/hal+xml format (links and resources)
      *
-     * @access public
-     * @return void
+     * @param bool $pretty Enable pretty-printing
+     * @return string
      */
     public function asXml($pretty=false)
     {
@@ -185,4 +185,3 @@ class Hal extends HalResource
         return $dom->ownerDocument->saveXML();
     }
 }
-
