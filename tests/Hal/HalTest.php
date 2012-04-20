@@ -165,4 +165,19 @@ class HalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(40, $result->resource->tests[1]->total);
         $this->assertEquals('GBP', $result->resource->tests[1]->currency);
     }
+
+    public function testAddingDataToRootResource()
+    {
+        $hal = new Hal(
+            '/root',
+            array(
+                'firstname' => 'Ben',
+                'surname' => 'Longden'
+            )
+        );
+
+        $result = json_decode($hal->asJson(true));
+        $this->assertEquals('Ben', $result->firstname);
+        $this->assertEquals('Longden', $result->surname);
+    }
 }

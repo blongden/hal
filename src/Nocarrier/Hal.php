@@ -120,7 +120,7 @@ class Hal extends HalResource
      * @param array $data
      * @param \SimpleXmlElement $element
      */
-    protected function array_to_xml($data, $element) {
+    protected function array_to_xml($data, $element, $parent=null) {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 if (!is_numeric($key)) {
