@@ -14,7 +14,7 @@ $hal = new Nocarrier\Hal('/orders');
 $hal->addLink('next', '/orders?page=2');
 $hal->addLink('search', '/orders?id={order_id}');
 
-$resource = new Nocarrier\HalResource(
+$resource = new Nocarrier\Hal(
     '/orders/123',
     array(
         'total' => 30.00,
