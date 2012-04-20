@@ -1,8 +1,32 @@
 <?php
+/**
+ * This file is part of the Hal library
+ *
+ * (c) Ben Longden <ben@nocarrier.co.uk
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @package Nocarrier
+ */
 namespace Nocarrier;
 
+/**
+ * HalJsonRenderer
+ * 
+ * @uses HalRenderer
+ * @package Nocarrier
+ * @author Ben Longden <ben@nocarrier.co.uk>
+ */
 class HalJsonRenderer implements HalRenderer
 {
+    /**
+     * render
+     *
+     * @param Hal $resource
+     * @param bool $pretty
+     * @return string
+     */
     public function render(Hal $resource, $pretty)
     {
         $options = 0;
@@ -13,7 +37,7 @@ class HalJsonRenderer implements HalRenderer
 
         return json_encode($this->arrayForJson($resource), $options);
     }
-    
+
     /**
      * Return an array (compatible with the hal+json format) representing associated links
      *

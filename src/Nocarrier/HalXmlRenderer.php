@@ -1,8 +1,32 @@
 <?php
+/**
+ * This file is part of the Hal library
+ *
+ * (c) Ben Longden <ben@nocarrier.co.uk
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @package Nocarrier
+ */
 namespace Nocarrier;
 
+/**
+ * HalXmlRenderer
+ *
+ * @uses HalRenderer
+ * @package Nocarrier
+ * @author Ben Longden <ben@nocarrier.co.uk>
+ */
 class HalXmlRenderer implements HalRenderer
 {
+    /**
+     * render
+     *
+     * @param Hal $resource
+     * @param bool $pretty
+     * @return string
+     */
     public function render(Hal $resource, $pretty)
     {
         $doc = new \SimpleXMLElement('<resource></resource>');
@@ -42,18 +66,22 @@ class HalXmlRenderer implements HalRenderer
     }
 
     /**
+     * arrayToXml
      *
      * @param array $data
-     * @param \SimpleXmlElement $element
+     * @param SimpleXmlElement $element
+     * @param mixed $parent
+     * @access protected
+     * @return void
      */
-    protected function array_to_xml($data, $element, $parent=null) {
+    protected function arrayToXml(array $data, \SimpleXmlElement $element, $parent=null) {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 if (!is_numeric($key)) {
-                    $this->array_to_xml($value, $element, $key);
+                    $this->arrayToXml($value, $element, $key);
                 } else {
                     $subnode = $element->addChild($parent);
-                    $this->array_to_xml($value, $subnode, $parent);
+                    $this->arrayToXml($value, $subnode, $parent);
                 }
             } else {
                 $element->addChild($key, $value);
@@ -82,7 +110,7 @@ class HalXmlRenderer implements HalRenderer
                 $this->resourcesForXml($element, $innerRel, $innerRes);
             }
 
-            $this->array_to_xml($resource->getData(), $element);
+            $this->arrayToXml($resource->getData(), $element);
         }
     }
 }
