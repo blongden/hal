@@ -18,8 +18,119 @@ namespace Nocarrier;
  * @package Nocarrier
  * @author Ben Longden <ben@nocarrier.co.uk>
  */
-class Hal extends HalResource
+class Hal
 {
+    /**
+     * uri
+     *
+     * @var mixed
+     */
+    protected $uri;
+
+    /**
+     * The data for this resource. An associative array of key value pairs.
+     * array(
+     *     'price' => 30.00,
+     *     'colour' => 'blue'
+     * )
+     *
+     * @var array
+     */
+    protected $data;
+
+    /**
+     * resources
+     *
+     * @var array
+     */
+    protected $resources = array();
+
+    /**
+     * links
+     *
+     * @var array
+     */
+    protected $links = array();
+
+    /**
+     * construct a new Hal. Call the parent and store the additional data on the resource.
+     *
+     * @param mixed $uri
+     * @param array $data
+     */
+    public function __construct($uri, array $data = array())
+    {
+        $this->uri = $uri;
+        $this->data = $data;
+    }
+
+    /**
+     * Add a link to the resource, identified by $rel, located at $uri, with an
+     * optional $title
+     *
+     * @param string $rel
+     * @param string $uri
+     * @param string $title
+     */
+    public function addLink($rel, $uri, $title = null)
+    {
+        // TODO: validate uri
+        $this->links[$rel] = array(
+            'uri' => $uri,
+            'title' => $title
+        );
+    }
+
+    /**
+     * Add an embedded resource, identified by $rel and represented by $resource.
+     *
+     * @param mixed $rel
+     * @param Hal $resource
+     */
+    public function addResource($rel, Hal $resource)
+    {
+        $this->resources[$rel][] = $resource;
+    }
+
+    /**
+     * Get resource data
+     *
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Get resource links
+     *
+     * @return array
+     */
+    public function getLinks()
+    {
+        return $this->links;
+    }
+
+    /**
+     * Get embedded resources
+     *
+     * @return array
+     */
+    public function getResources()
+    {
+        return $this->resources;
+    }
+
+    /**
+     * Get resource's URI
+     *
+     * @return mixed
+     */
+    public function getUri()
+    {
+        return $this->uri;
+    }
     /**
      * Return an array (compatible with the hal+json format) representing associated links
      *
@@ -62,10 +173,10 @@ class Hal extends HalResource
      * Return an array (compatible with the hal+json format) representing the
      * complete response
      *
-     * @param HalResource $resource
+     * @param Hal $resource
      * @return array
      */
-    protected function arrayForJson(HalResource $resource)
+    protected function arrayForJson(Hal $resource)
     {
         $data = $resource->getData();
         $data['_links'] = $this->linksForJson($resource->getUri(), $resource->getLinks());
@@ -95,70 +206,6 @@ class Hal extends HalResource
         return json_encode($this->arrayForJson($this), $options);
     }
 
-    /**
-     * linksForXml
-     * Add links in hal+xml format to a SimpleXmlElement object
-     *
-     * @param SimpleXmlElement $doc
-     * @param array $links
-     * @return void
-     */
-    protected function linksForXml(\SimpleXmlElement $doc, array $links)
-    {
-        foreach($links as $rel => $link) {
-            $element = $doc->addChild('link');
-            $element->addAttribute('rel', $rel);
-            $element->addAttribute('href', $link['uri']);
-            if (!is_null($link['title'])) {
-                $element->addAttribute('title', $link['title']);
-            }
-        }
-    }
-
-    /**
-     *
-     * @param array $data
-     * @param \SimpleXmlElement $element
-     */
-    protected function array_to_xml($data, $element, $parent=null) {
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                if (!is_numeric($key)) {
-                    $subnode = $element->addChild($key);
-                    $this->array_to_xml($value, $subnode);
-                } else{
-                    $this->array_to_xml($value, $element);
-                }
-            } else {
-                $element->addChild($key, $value);
-            }
-        }
-    }
-
-    /**
-     * resourcesForXml
-     * Add resources in hal+xml format (identified by $rel) to a SimpleXmlElement object
-     *
-     * @param SimpleXmlElement $doc
-     * @param mixed $rel
-     * @param array $resources
-     */
-    protected function resourcesForXml(\SimpleXmlElement $doc, $rel, array $resources)
-    {
-        foreach($resources as $resource) {
-            $element = $doc->addChild('resource');
-            $element->addAttribute('rel', $rel);
-            $element->addAttribute('href', $resource->uri);
-
-            $this->linksForXml($element, $resource->links);
-
-            foreach($resource->resources as $innerRel => $innerRes) {
-                $this->resourcesForXml($element, $innerRel, $innerRes);
-            }
-
-            $this->array_to_xml($resource->data, $element);
-        }
-    }
 
     /**
      * asXml
@@ -169,19 +216,7 @@ class Hal extends HalResource
      */
     public function asXml($pretty=false)
     {
-        $doc = new \SimpleXMLElement('<resource></resource>');
-        $doc->addAttribute('href', $this->uri);
-        $this->linksForXml($doc, $this->links);
-
-        foreach($this->resources as $rel => $resources) {
-            $this->resourcesForXml($doc, $rel, $resources);
-        }
-
-        $dom = dom_import_simplexml($doc);
-        if ($pretty) {
-            $dom->ownerDocument->preserveWhiteSpace = false;
-            $dom->ownerDocument->formatOutput = true;
-        }
-        return $dom->ownerDocument->saveXML();
+        $renderer = new HalXmlRenderer();
+        return $renderer->render($this, $pretty);
     }
 }

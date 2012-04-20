@@ -12,11 +12,11 @@
 
 namespace Nocarrier\Tests;
 
-require_once 'src/Nocarrier/HalResource.php';
 require_once 'src/Nocarrier/Hal.php';
+require_once 'src/Nocarrier/HalRenderer.php';
+require_once 'src/Nocarrier/HalXmlRenderer.php';
 
 use \Nocarrier\Hal;
-use \Nocarrier\HalResource;
 
 /**
  * HalTest
@@ -65,7 +65,7 @@ class HalTest extends \PHPUnit_Framework_TestCase
     public function testResourceJsonResponse()
     {
         $hal = new Hal('http://example.com/');
-        $res = new HalResource('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
         $hal->addResource('resource', $res);
 
         $resource = json_decode($hal->asJson());
@@ -79,7 +79,7 @@ class HalTest extends \PHPUnit_Framework_TestCase
     public function testResourceXmlResponse()
     {
         $hal = new Hal('http://example.com/');
-        $res = new HalResource('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
         $hal->addResource('resource', $res);
 
         $result = new \SimpleXmlElement($hal->asXml());
@@ -91,10 +91,10 @@ class HalTest extends \PHPUnit_Framework_TestCase
     public function testEmbeddedResourceInResourceJsonResponse()
     {
         $hal = new Hal('http://example.com/');
-        $res = new HalResource('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
         $res->addResource(
             'item', 
-            new HalResource(
+            new Hal(
                 '/resource/1/item/1',
                 array(
                     'itemField1' => 'itemValue1'
@@ -112,10 +112,10 @@ class HalTest extends \PHPUnit_Framework_TestCase
     public function testEmbeddedResourceInResourceXmlResponse()
     {
         $hal = new Hal('http://example.com/');
-        $res = new HalResource('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
         $res->addResource(
             'item', 
-            new HalResource(
+            new Hal(
                 '/resource/1/item/1',
                 array(
                     'items' => array(
@@ -140,7 +140,7 @@ class HalTest extends \PHPUnit_Framework_TestCase
         $hal->addLink('next', '/orders?page=2');
         $hal->addLink('search', '/orders?id={order_id}');
 
-        $resource = new HalResource(
+        $resource = new Hal(
             '/orders/123',
             array(
                 'tests' => array(
