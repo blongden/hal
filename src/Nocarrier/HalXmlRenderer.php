@@ -50,10 +50,10 @@ class HalXmlRenderer implements HalRenderer
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 if (!is_numeric($key)) {
-                    $subnode = $element->addChild($key);
-                    $this->array_to_xml($value, $subnode);
-                } else{
-                    $this->array_to_xml($value, $element);
+                    $this->array_to_xml($value, $element, $key);
+                } else {
+                    $subnode = $element->addChild($parent);
+                    $this->array_to_xml($value, $subnode, $parent);
                 }
             } else {
                 $element->addChild($key, $value);

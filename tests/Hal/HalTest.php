@@ -158,13 +158,11 @@ class HalTest extends \PHPUnit_Framework_TestCase
         );
         $resource->addLink('customer', '/customer/bob', 'Bob Jones <bob@jones.com>');
         $hal->addResource('order', $resource);
-
         $result = new \SimpleXmlElement($hal->asXml());
-        $this->markTestIncomplete();
-        $this->assertEquals(30, $result->resource->tests[0]->total);
-        $this->assertEquals('USD', $result->resource->tests[0]->currency);
-        $this->assertEquals(40, $result->resource->tests[1]->total);
-        $this->assertEquals('GBP', $result->resource->tests[1]->currency);
+        $this->assertEquals(30, (string)$result->resource->tests[0]->total);
+        $this->assertEquals('USD', (string)$result->resource->tests[0]->currency);
+        $this->assertEquals(40, (string)$result->resource->tests[1]->total);
+        $this->assertEquals('GBP', (string)$result->resource->tests[1]->currency);
     }
 
     public function testAddingDataToRootResource()
