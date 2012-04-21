@@ -49,10 +49,21 @@ class HalJsonRenderer implements HalRenderer
     {
         $data = array('self' => array('href' => $uri));
 
-        foreach($links as $rel => $link) {
-            $data[$rel] = array('href' => $link['uri']);
-            if (!is_null($link['title'])) {
-                $data[$rel]['title'] = $link['title'];
+        foreach($links as $rel => $links) {
+            if (count($links) === 1) {
+                $data[$rel] = array('href' => $links[0]['uri']);
+                if (!is_null($links[0]['title'])) {
+                    $data[$rel]['title'] = $links[0]['title'];
+                }
+            } else {
+                $data[$rel] = array();
+                foreach ($links as $link) {
+                    $item = array('href' => $link['uri']);
+                    if (!is_null($link['title'])) {
+                        $item['title'] = $link['title'];
+                    }
+                    $data[$rel][] = $item;
+                }
             }
         }
 

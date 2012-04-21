@@ -75,7 +75,7 @@ class Hal
     public function addLink($rel, $uri, $title = null)
     {
         // TODO: validate uri
-        $this->links[$rel] = array(
+        $this->links[$rel][] = array(
             'uri' => $uri,
             'title' => $title
         );

@@ -179,4 +179,31 @@ class HalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Ben', $result->firstname);
         $this->assertEquals('Longden', $result->surname);
     }
+
+    public function testAddArrayOfLinksInJson()
+    {
+        $hal = new Hal('/');
+        $hal->addLink('members', '/member/1', 'Member 1');
+        $hal->addLink('members', '/member/2', 'Member 2');
+
+        $result = json_decode($hal->asJson());
+        $this->assertEquals('/member/1', $result->_links->members[0]->href);
+        $this->assertEquals('/member/2', $result->_links->members[1]->href);
+        $this->assertEquals('Member 1', $result->_links->members[0]->title);
+        $this->assertEquals('Member 2', $result->_links->members[1]->title);
+    }
+    
+    public function testAddArrayOfLinksInXml()
+    {
+        $hal = new Hal('/');
+        $hal->addLink('members', '/member/1', 'Member 1');
+        $hal->addLink('members', '/member/2', 'Member 2');
+        $result = new \SimpleXmlElement($hal->asXml());
+        $this->assertEquals('members', $result->link[0]->attributes()->rel);
+        $this->assertEquals('members', $result->link[1]->attributes()->rel);
+        $this->assertEquals('/member/1', $result->link[0]->attributes()->href);
+        $this->assertEquals('/member/2', $result->link[1]->attributes()->href);
+        $this->assertEquals('Member 1', $result->link[0]->attributes()->title);
+        $this->assertEquals('Member 2', $result->link[1]->attributes()->title);
+    }
 }
