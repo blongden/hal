@@ -192,7 +192,7 @@ class HalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Member 1', $result->_links->members[0]->title);
         $this->assertEquals('Member 2', $result->_links->members[1]->title);
     }
-    
+
     public function testAddArrayOfLinksInXml()
     {
         $hal = new Hal('/');
@@ -205,5 +205,28 @@ class HalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('/member/2', $result->link[1]->attributes()->href);
         $this->assertEquals('Member 1', $result->link[0]->attributes()->title);
         $this->assertEquals('Member 2', $result->link[1]->attributes()->title);
+    }
+
+    public function testAttributesInXmlRepresentation()
+    {
+        $hal = new Hal(
+            '/',
+            array(
+                'error' => array(
+                    '@id' => 6,
+                    '@xml:lang' => 'en',
+                    'message' => 'This is a message'
+                )
+            )
+        );
+
+        $xml = new \SimpleXMLElement($hal->asXml());
+        $this->assertEquals(6, (string)$xml->error->attributes()->id);
+        $this->assertEquals('en', (string)$xml->error->attributes()->lang);
+        $this->assertEquals('This is a message', (string)$xml->error->message);
+
+        $json = json_decode($hal->asJson(true));
+        $this->markTestIncomplete();
+        $this->assertEquals(6, $json->error->id);
     }
 }

@@ -33,6 +33,8 @@ class HalXmlRenderer implements HalRenderer
         $doc->addAttribute('href', $resource->getUri());
         $this->linksForXml($doc, $resource->getLinks());
 
+        $this->arrayToXml($resource->getData(), $doc);
+
         foreach($resource->getResources() as $rel => $resources) {
             $this->resourcesForXml($doc, $rel, $resources);
         }
@@ -44,7 +46,6 @@ class HalXmlRenderer implements HalRenderer
         }
         return $dom->ownerDocument->saveXML();
     }
-
     /**
      * linksForXml
      * Add links in hal+xml format to a SimpleXmlElement object
@@ -80,13 +81,22 @@ class HalXmlRenderer implements HalRenderer
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 if (!is_numeric($key)) {
-                    $this->arrayToXml($value, $element, $key);
+                    if (count($value) > 0 && isset($value[0])) {
+                        $this->arrayToXml($value, $element, $key);
+                    } else {
+                        $subnode = $element->addChild($key);
+                        $this->arrayToXml($value, $subnode, $key);
+                    }
                 } else {
                     $subnode = $element->addChild($parent);
                     $this->arrayToXml($value, $subnode, $parent);
                 }
             } else {
-                $element->addChild($key, $value);
+                if (substr($key, 0, 1) === '@') {
+                    $element->addAttribute(substr($key, 1), $value);
+                } else {
+                    $element->addChild($key, $value);
+                }
             }
         }
     }
