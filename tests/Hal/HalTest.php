@@ -229,4 +229,140 @@ class HalTest extends \PHPUnit_Framework_TestCase
         $this->markTestIncomplete();
         $this->assertEquals(6, $json->error->id);
     }
+
+    /**
+     * @covers \Nocarrier\Hal::addLink
+     * @covers \Nocarrier\HalJsonRenderer::linksForJson
+     */
+    public function testLinkAttributesInJson()
+    {
+        $hal = new Hal('http://example.com/');
+        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+            'anchor' => '#foo',
+            'rev' => 'canonical',
+            'hreflang' => 'en',
+            'media' => 'screen',
+            'type' => 'text/html',
+            'templated' => 'true',
+            'name' => 'ex',
+        ));
+
+        $result = json_decode($hal->asJson());
+        $this->assertEquals('#foo', $result->_links->test->anchor);
+        $this->assertEquals('canonical', $result->_links->test->rev);
+        $this->assertEquals('en', $result->_links->test->hreflang);
+        $this->assertEquals('screen', $result->_links->test->media);
+        $this->assertEquals('text/html', $result->_links->test->type);
+        $this->assertEquals('true', $result->_links->test->templated);
+        $this->assertEquals('ex', $result->_links->test->name);
+    }
+
+    /**
+     * @covers \Nocarrier\HalJsonRenderer::linksForJson
+     * Provided for code coverage
+     */
+    public function testLinkAttributesInJsonWithArrayOfLinks()
+    {
+        $hal = new Hal('http://example.com/');
+        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+            'anchor' => '#foo1',
+            'rev' => 'canonical1',
+            'hreflang' => 'en1',
+            'media' => 'screen1',
+            'type' => 'text/html1',
+            'templated' => 'true1',
+            'name' => 'ex1',
+        ));
+        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+            'anchor' => '#foo2',
+            'rev' => 'canonical2',
+            'hreflang' => 'en2',
+            'media' => 'screen2',
+            'type' => 'text/html2',
+            'templated' => 'true2',
+            'name' => 'ex2',
+        ));
+
+        $result = json_decode($hal->asJson());
+        $i = 1;
+        foreach ($result->_links->test as $testLink) {
+            $this->assertEquals('#foo' . $i, $testLink->anchor);
+            $this->assertEquals('canonical' . $i, $testLink->rev);
+            $this->assertEquals('en' . $i, $testLink->hreflang);
+            $this->assertEquals('screen' . $i, $testLink->media);
+            $this->assertEquals('text/html' . $i, $testLink->type);
+            $this->assertEquals('true' . $i, $testLink->templated);
+            $this->assertEquals('ex' . $i, $testLink->name);
+            $i++;
+        }
+    }
+
+    /**
+     * @covers \Nocarrier\Hal::addLink
+     * @covers \Nocarrier\HalXmlRenderer::linksForXml
+     */
+    public function testLinkAttributesInXml()
+    {
+        $hal = new Hal('http://example.com/');
+        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+            'anchor' => '#foo',
+            'rev' => 'canonical',
+            'hreflang' => 'en',
+            'media' => 'screen',
+            'type' => 'text/html',
+            'templated' => 'true',
+            'name' => 'ex',
+        ));
+
+        $result = new \SimpleXmlElement($hal->asXml());
+        $data = $result->link->attributes();
+        $this->assertEquals('#foo', $data['anchor']);
+        $this->assertEquals('canonical', $data['rev']);
+        $this->assertEquals('en', $data['hreflang']);
+        $this->assertEquals('screen', $data['media']);
+        $this->assertEquals('text/html', $data['type']);
+        $this->assertEquals('true', $data['templated']);
+        $this->assertEquals('ex', $data['name']);
+    }
+
+    /**
+     * @covers \Nocarrier\HalXmlRenderer::linksForXml
+     * Provided for code coverage.
+     */
+    public function testLinkAttributesInXmlWithArrayOfLinks()
+    {
+        $hal = new Hal('http://example.com/');
+        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+            'anchor' => '#foo1',
+            'rev' => 'canonical1',
+            'hreflang' => 'en1',
+            'media' => 'screen1',
+            'type' => 'text/html1',
+            'templated' => 'true1',
+            'name' => 'ex1',
+        ));
+        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+            'anchor' => '#foo2',
+            'rev' => 'canonical2',
+            'hreflang' => 'en2',
+            'media' => 'screen2',
+            'type' => 'text/html2',
+            'templated' => 'true2',
+            'name' => 'ex2',
+        ));
+
+        $result = new \SimpleXmlElement($hal->asXml());
+        $i = 1;
+        foreach ($result->link as $link) {
+            $data = $link->attributes();
+            $this->assertEquals('#foo' . $i, $data['anchor']);
+            $this->assertEquals('canonical' . $i, $data['rev']);
+            $this->assertEquals('en' . $i, $data['hreflang']);
+            $this->assertEquals('screen' . $i, $data['media']);
+            $this->assertEquals('text/html' . $i, $data['type']);
+            $this->assertEquals('true' . $i, $data['templated']);
+            $this->assertEquals('ex' . $i, $data['name']);
+            $i++;
+        }
+    }
 }

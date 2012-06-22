@@ -71,13 +71,15 @@ class Hal
      * @param string $rel
      * @param string $uri
      * @param string $title
+     * @param array $attributes Other attributes, as defined by HAL spec and RFC 5988
      */
-    public function addLink($rel, $uri, $title = null)
+    public function addLink($rel, $uri, $title = null, array $attributes = array())
     {
         // TODO: validate uri
         $this->links[$rel][] = array(
             'uri' => $uri,
-            'title' => $title
+            'title' => $title,
+            'attributes' => $attributes,
         );
     }
 
