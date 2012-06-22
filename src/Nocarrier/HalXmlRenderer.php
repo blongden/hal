@@ -64,6 +64,9 @@ class HalXmlRenderer implements HalRenderer
                 if (!is_null($link['title'])) {
                     $element->addAttribute('title', $link['title']);
                 }
+                foreach ($link['attributes'] as $attribute => $value) {
+                    $element->addAttribute($attribute, $value);
+                }
             }
         }
     }
