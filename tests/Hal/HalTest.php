@@ -63,6 +63,21 @@ class HalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('My Test', $data['title']);
     }
 
+    public function testXmlPrettyPrintResponse()
+    {
+        $hal = new Hal('http://example.com/');
+        $hal->addLink('test', '/test/1', 'My Test');
+
+        $response = <<<EOD
+<?xml version="1.0"?>
+<resource href="http://example.com/">
+  <link rel="test" href="/test/1" title="My Test"/>
+</resource>
+
+EOD;
+        $this->assertEquals($response, $hal->asXml(true));
+    }
+
     public function testResourceJsonResponse()
     {
         $hal = new Hal('http://example.com/');
