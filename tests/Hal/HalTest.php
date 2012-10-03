@@ -241,8 +241,9 @@ EOD;
         $this->assertEquals('This is a message', (string)$xml->error->message);
 
         $json = json_decode($hal->asJson(true));
-        $this->markTestIncomplete();
         $this->assertEquals(6, $json->error->id);
+        $this->assertEquals('en', $json->error->lang);
+        $this->assertEquals('This is a message', $json->error->message);
     }
 
     /**
