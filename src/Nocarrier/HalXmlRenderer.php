@@ -99,10 +99,10 @@ class HalXmlRenderer implements HalRenderer
                     if (substr($key, 0, 1) === '@') {
                         $element->addAttribute(substr($key, 1), $value);
                     } else {
-                        $element->addChild($key, $value);
+                        $element->addChild($key, htmlentities($value));
                     }
                 } else {
-                    $element->addChild($parent, $value);
+                    $element->addChild($parent, htmlentities($value));
                 }
             }
         }
