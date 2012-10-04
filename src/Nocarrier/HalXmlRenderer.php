@@ -95,12 +95,16 @@ class HalXmlRenderer implements HalRenderer
                     $this->arrayToXml($value, $subnode, $parent);
                 }
             } else {
-                if (substr($key, 0, 1) === '@') {
-                    $element->addAttribute(substr($key, 1), $value);
-                } elseif($key === 'value') {
-                    $element->{0} = $value;
+                if (!is_numeric($key)) {
+                    if (substr($key, 0, 1) === '@') {
+                        $element->addAttribute(substr($key, 1), $value);
+                    } elseif($key === 'value') {
+                        $element->{0} = $value;
+                    } else {
+                        $element->addChild($key, $value);
+                    }
                 } else {
-                    $element->addChild($key, $value);
+                    $element->addChild($parent, $value);
                 }
             }
         }

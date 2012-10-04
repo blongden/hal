@@ -381,4 +381,23 @@ EOD;
             $i++;
         }
     }
+
+    public function testNumericKeysUseParentAsXmlElementName()
+    {
+        $hal = new Hal('/', array(
+            'foo' => array(
+                'bar',
+                'baz',
+            ),
+        ));
+
+        $result = new \SimpleXmlElement($hal->asXml());
+
+        $this->assertEquals('bar', $result->foo[0]);
+        $this->assertEquals('baz', $result->foo[1]);
+
+        $json = json_decode($hal->asJson(), true);
+
+        $this->assertEquals(array('bar', 'baz'), $json['foo']);
+    }
 }
