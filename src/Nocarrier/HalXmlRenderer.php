@@ -101,10 +101,10 @@ class HalXmlRenderer implements HalRenderer
                     } elseif($key === 'value') {
                         $element->{0} = $value;
                     } else {
-                        $element->addChild($key, $value);
+                        $element->addChild($key, htmlentities($value));
                     }
                 } else {
-                    $element->addChild($parent, $value);
+                    $element->addChild($parent, htmlentities($value));
                 }
             }
         }
