@@ -119,7 +119,7 @@
             <arg value="-d" />
             <arg value="${basedir}/src" />
             <arg value="-t" />
-            <arg value="${basedir}/build/phpdoc" />
+            <arg value="${basedir}/build/api" />
         </exec>
     </target>
 
