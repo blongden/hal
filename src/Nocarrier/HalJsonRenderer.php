@@ -93,6 +93,25 @@ class HalJsonRenderer implements HalRenderer
         return $data;
     }
 
+    protected function stripAttributeMarker(array $data)
+    {
+        foreach ($data as $key => $value) {
+            if (substr($key, 0, 5) == '@xml:') {
+                $data[substr($key, 5)] = $value;
+                unset ($data[$key]);
+            } elseif (substr($key, 0, 1) == '@') {
+                $data[substr($key, 1)] = $value;
+                unset ($data[$key]);
+            }
+
+            if (is_array($value)) {
+                $data[$key] = $this->stripAttributeMarker($value);
+            }
+        }
+
+        return $data;
+    }
+
     /**
      * Return an array (compatible with the hal+json format) representing the
      * complete response
@@ -103,8 +122,9 @@ class HalJsonRenderer implements HalRenderer
     protected function arrayForJson(Hal $resource)
     {
         $data = $resource->getData();
-        $data['_links'] = $this->linksForJson($resource->getUri(), $resource->getLinks());
+        $data = $this->stripAttributeMarker($data);
 
+        $data['_links'] = $this->linksForJson($resource->getUri(), $resource->getLinks());
         foreach($resource->getResources() as $rel => $resources) {
             $data['_embedded'][$rel] = $this->resourcesForJson($resources);
         }
