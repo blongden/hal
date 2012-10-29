@@ -38,7 +38,8 @@ following composer.json will download and install the latest version of the Hal 
 {
     "require": {
         "nocarrier/hal": "*"
-    }
+    },
+    "minimum-stability": "dev"
 }
 ```
 
