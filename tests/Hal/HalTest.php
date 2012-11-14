@@ -21,10 +21,10 @@ use \Nocarrier\Hal;
 
 /**
  * HalTest
- * 
+ *
  * @package Nocarrier
  * @subpackage Tests
- * @author Ben Longden <ben@nocarrier.co.uk> 
+ * @author Ben Longden <ben@nocarrier.co.uk>
  */
 class HalTest extends \PHPUnit_Framework_TestCase
 {
@@ -109,7 +109,7 @@ EOD;
         $hal = new Hal('http://example.com/');
         $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
         $res->addResource(
-            'item', 
+            'item',
             new Hal(
                 '/resource/1/item/1',
                 array(
@@ -130,7 +130,7 @@ EOD;
         $hal = new Hal('http://example.com/');
         $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
         $res->addResource(
-            'item', 
+            'item',
             new Hal(
                 '/resource/1/item/1',
                 array(
@@ -399,5 +399,51 @@ EOD;
         $json = json_decode($hal->asJson(), true);
 
         $this->assertEquals(array('bar', 'baz'), $json['foo']);
+    }
+
+    public function testMinimalHalJsonDecoding()
+    {
+        $sample = '{"_links":{"self":{"href":"http:\/\/example.com\/"}}}';
+        $hal = Hal::fromJson($sample);
+        $this->assertEquals($sample, $hal->asJson());
+    }
+
+    public function testHalJsonDecodeWithData()
+    {
+        $sample = '{"_links":{"self":{"href":"http:\/\/example.com\/"}},"key":"value"}';
+        $data = Hal::fromJson($sample)->getData();
+        $this->assertEquals('value', $data['key']);
+    }
+
+    public function testMinimalHalXmlDecoding()
+    {
+        $sample = "<?xml version=\"1.0\"?>\n<resource href=\"http://example.com/\"/>\n";
+        $hal = Hal::fromXml($sample);
+        $this->assertEquals($sample, $hal->asXml());
+    }
+
+    public function testHalXmlDecodeWithData()
+    {
+        $sample = "<?xml version=\"1.0\"?>\n<resource href=\"http://example.com/\"><key>value</key></resource>\n";
+        $data = Hal::fromXml($sample)->getData();
+        $this->assertEquals('value', $data['key']);
+    }
+
+    public function testHalJsonDecodeWithLinks()
+    {
+        $x = new Hal('/test', array('name' => "Ben Longden"));
+        $x->addLink('a', '/a', 'A Test');
+        $y = Hal::fromJson($x->asJson());
+
+        $this->assertEquals($x->asJson(true), $y->asJson(true));
+    }
+
+    public function testHalXmlDecodeWithLinks()
+    {
+        $x = new Hal('/test', array('name' => "Ben Longden"));
+        $x->addLink('a', '/a', 'A Test');
+        $y = Hal::fromXml($x->asXml());
+
+        $this->assertEquals($x->asXml(true), $y->asXml(true));
     }
 }

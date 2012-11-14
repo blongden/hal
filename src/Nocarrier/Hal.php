@@ -64,6 +64,40 @@ class Hal
         $this->data = $data;
     }
 
+    public static function fromJson($text)
+    {
+        $data = json_decode($text, true);
+        $uri = $data['_links']['self']['href'];
+        unset ($data['_links']['self']);
+
+        $links = $data['_links'];
+        unset ($data['_links']);
+
+        $resources = isset($data['_embedded']) ? $data['_embedded'] : array();
+        unset ($data['_embedded']);
+
+        $hal = new Hal($uri, $data);
+        foreach ($links as $rel => $link) {
+            $hal->addLink($rel, $link['href'], $link['title']);
+        }
+        return $hal;
+    }
+
+    public static function fromXml($text)
+    {
+        $data = new \SimpleXMLElement($text);
+        $children = $data->children();
+        $links = clone $children->link;
+        unset ($children->link);
+
+        $hal = new Hal($data->attributes()->href, (array)$children);
+        foreach ($links as $link) {
+            $hal->addLink((string)$link->attributes()->rel, (string)$link->attributes()->href, (string)$link->attributes()->title);
+        }
+
+        return $hal;
+    }
+
     /**
      * Add a link to the resource, identified by $rel, located at $uri, with an
      * optional $title
@@ -133,7 +167,7 @@ class Hal
     {
         return $this->uri;
     }
-    
+
     /**
      * asJson
      * Return the current object in a application/hal+json format (links and resources)
