@@ -1,7 +1,7 @@
 Nocarrier\Hal
 =============
 
-[![Build Status](http://travis-ci.org/blongden/hal.png)](http://travis-ci.org/blongden/hal)
+[![Build Status](https://secure.travis-ci.org/blongden/hal.png)](http://travis-ci.org/blongden/hal)
 
 This is a library for creating documents in the [application/hal+json and application/hal+xml][1] hypermedia formats
 
@@ -38,7 +38,8 @@ following composer.json will download and install the latest version of the Hal 
 {
     "require": {
         "nocarrier/hal": "*"
-    }
+    },
+    "minimum-stability": "dev"
 }
 ```
 

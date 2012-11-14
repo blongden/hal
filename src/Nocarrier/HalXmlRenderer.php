@@ -98,11 +98,13 @@ class HalXmlRenderer implements HalRenderer
                 if (!is_numeric($key)) {
                     if (substr($key, 0, 1) === '@') {
                         $element->addAttribute(substr($key, 1), $value);
+                    } elseif($key === 'value') {
+                        $element->{0} = $value;
                     } else {
-                        $element->addChild($key, htmlentities($value));
+                        $element->addChild($key, htmlspecialchars($value, ENT_QUOTES));
                     }
                 } else {
-                    $element->addChild($parent, htmlentities($value));
+                    $element->addChild($parent, htmlspecialchars($value, ENT_QUOTES));
                 }
             }
         }
