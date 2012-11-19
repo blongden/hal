@@ -100,6 +100,8 @@ class HalXmlRenderer implements HalRenderer
                         $element->addAttribute(substr($key, 1), $value);
                     } elseif($key === 'value') {
                         $element->{0} = $value;
+                    } elseif(is_bool($value)) {
+                        $element->addChild($key, intval($value));
                     } else {
                         $element->addChild($key, htmlspecialchars($value, ENT_QUOTES));
                     }
