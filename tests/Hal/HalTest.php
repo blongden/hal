@@ -400,4 +400,20 @@ EOD;
 
         $this->assertEquals(array('bar', 'baz'), $json['foo']);
     }
+
+    public function testBooleanOutput()
+    {
+        $hal = new Hal('/', array(
+            'foo' => true,
+            'bar' => false
+        ));
+
+        $xml = new \SimpleXMLElement($hal->asXml());
+        $this->assertSame('1', (string)$xml->foo);
+        $this->assertSame('0', (string)$xml->bar);
+
+        $json = json_decode($hal->asJson());
+        $this->assertTrue(true);
+        $this->assertFalse(false);
+    }
 }
