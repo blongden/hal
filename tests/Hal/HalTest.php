@@ -21,10 +21,10 @@ use \Nocarrier\Hal;
 
 /**
  * HalTest
- * 
+ *
  * @package Nocarrier
  * @subpackage Tests
- * @author Ben Longden <ben@nocarrier.co.uk> 
+ * @author Ben Longden <ben@nocarrier.co.uk>
  */
 class HalTest extends \PHPUnit_Framework_TestCase
 {
@@ -109,7 +109,7 @@ EOD;
         $hal = new Hal('http://example.com/');
         $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
         $res->addResource(
-            'item', 
+            'item',
             new Hal(
                 '/resource/1/item/1',
                 array(
@@ -130,7 +130,7 @@ EOD;
         $hal = new Hal('http://example.com/');
         $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
         $res->addResource(
-            'item', 
+            'item',
             new Hal(
                 '/resource/1/item/1',
                 array(
@@ -399,5 +399,21 @@ EOD;
         $json = json_decode($hal->asJson(), true);
 
         $this->assertEquals(array('bar', 'baz'), $json['foo']);
+    }
+
+    public function testBooleanOutput()
+    {
+        $hal = new Hal('/', array(
+            'foo' => true,
+            'bar' => false
+        ));
+
+        $xml = new \SimpleXMLElement($hal->asXml());
+        $this->assertSame('1', (string)$xml->foo);
+        $this->assertSame('0', (string)$xml->bar);
+
+        $json = json_decode($hal->asJson());
+        $this->assertTrue($json->foo);
+        $this->assertFalse($json->bar);
     }
 }
