@@ -46,7 +46,7 @@ class Hal
     protected $resources = array();
 
     /**
-     * links
+     *
      *
      * @var array
      */
@@ -109,12 +109,7 @@ class Hal
      */
     public function addLink($rel, $uri, $title = null, array $attributes = array())
     {
-        // TODO: validate uri
-        $this->links[$rel][] = array(
-            'uri' => $uri,
-            'title' => $title,
-            'attributes' => $attributes,
-        );
+        $this->links[$rel][] = new HalLink($uri, $title, $attributes);
     }
 
     /**

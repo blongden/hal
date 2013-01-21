@@ -12,10 +12,7 @@
 
 namespace Nocarrier\Tests;
 
-require_once 'src/Nocarrier/Hal.php';
-require_once 'src/Nocarrier/HalRenderer.php';
-require_once 'src/Nocarrier/HalXmlRenderer.php';
-require_once 'src/Nocarrier/HalJsonRenderer.php';
+require_once 'vendor/autoload.php';
 
 use \Nocarrier\Hal;
 

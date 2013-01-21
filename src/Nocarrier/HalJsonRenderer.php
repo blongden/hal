@@ -13,7 +13,7 @@ namespace Nocarrier;
 
 /**
  * HalJsonRenderer
- * 
+ *
  * @uses HalRenderer
  * @package Nocarrier
  * @author Ben Longden <ben@nocarrier.co.uk>
@@ -51,21 +51,21 @@ class HalJsonRenderer implements HalRenderer
 
         foreach($links as $rel => $links) {
             if (count($links) === 1) {
-                $data[$rel] = array('href' => $links[0]['uri']);
-                if (!is_null($links[0]['title'])) {
-                    $data[$rel]['title'] = $links[0]['title'];
+                $data[$rel] = array('href' => $links[0]->getUri());
+                if (!is_null($links[0]->getTitle())) {
+                    $data[$rel]['title'] = $links[0]->getTitle();
                 }
-                foreach ($links[0]['attributes'] as $attribute => $value) {
+                foreach ($links[0]->getAttributes() as $attribute => $value) {
                     $data[$rel][$attribute] = $value;
                 }
             } else {
                 $data[$rel] = array();
                 foreach ($links as $link) {
-                    $item = array('href' => $link['uri']);
-                    if (!is_null($link['title'])) {
-                        $item['title'] = $link['title'];
+                    $item = array('href' => $link->getUri());
+                    if (!is_null($link->getTitle())) {
+                        $item['title'] = $link->getTitle();
                     }
-                    foreach ($link['attributes'] as $attribute => $value) {
+                    foreach ($link->getAttributes() as $attribute => $value) {
                         $item[$attribute] = $value;
                     }
                     $data[$rel][] = $item;
