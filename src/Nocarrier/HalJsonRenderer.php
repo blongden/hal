@@ -131,5 +131,4 @@ class HalJsonRenderer implements HalRenderer
 
         return $data;
     }
-
 }

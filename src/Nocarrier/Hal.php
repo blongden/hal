@@ -46,7 +46,11 @@ class Hal
     protected $resources = array();
 
     /**
-     *
+     * A collection of Nocarrier\HalLink objects keyed by the link relation to this
+     * resource.
+     * array(
+     *     'next' => [HalLink]
+     * )
      *
      * @var array
      */
@@ -64,6 +68,14 @@ class Hal
         $this->data = $data;
     }
 
+    /**
+     * Decode a application/hal+json document into a Nocarrier\Hal object
+     *
+     * @param string $text
+     * @static
+     * @access public
+     * @return Nocarrier\Hal
+     */
     public static function fromJson($text)
     {
         $data = json_decode($text, true);
@@ -73,7 +85,7 @@ class Hal
         $links = $data['_links'];
         unset ($data['_links']);
 
-        $resources = isset($data['_embedded']) ? $data['_embedded'] : array();
+        $embedded = isset($data['_embedded']) ? $data['_embedded'] : array();
         unset ($data['_embedded']);
 
         $hal = new Hal($uri, $data);
@@ -83,12 +95,23 @@ class Hal
         return $hal;
     }
 
+    /**
+     * Decode a application/hal+xml document into a Nocarrier\Hal object
+     *
+     * @param string $text
+     * @static
+     * @access public
+     * @return void
+     */
     public static function fromXml($text)
     {
         $data = new \SimpleXMLElement($text);
         $children = $data->children();
         $links = clone $children->link;
         unset ($children->link);
+
+        $embedded = clone $children->resource;
+        unset ($children->resource);
 
         $hal = new Hal($data->attributes()->href, (array)$children);
         foreach ($links as $link) {
@@ -110,21 +133,23 @@ class Hal
     public function addLink($rel, $uri, $title = null, array $attributes = array())
     {
         $this->links[$rel][] = new HalLink($uri, $title, $attributes);
+        return $this;
     }
 
     /**
      * Add an embedded resource, identified by $rel and represented by $resource.
      *
-     * @param mixed $rel
+     * @param string $rel
      * @param Hal $resource
      */
     public function addResource($rel, Hal $resource)
     {
         $this->resources[$rel][] = $resource;
+        return $this;
     }
 
     /**
-     * Get resource data
+     * Return an array of data (key => value pairs) representing this resource
      *
      * @return array
      */
@@ -134,7 +159,8 @@ class Hal
     }
 
     /**
-     * Get resource links
+     * Return an array of Nocarrier\HalLink objects representing resources
+     * related to this one.
      *
      * @return array
      */
@@ -144,7 +170,7 @@ class Hal
     }
 
     /**
-     * Get embedded resources
+     * Return an array of Nocarrier\Hal objected embedded in this one.
      *
      * @return array
      */
@@ -175,7 +201,6 @@ class Hal
         $renderer = new HalJsonRenderer();
         return $renderer->render($this, $pretty);
     }
-
 
     /**
      * asXml

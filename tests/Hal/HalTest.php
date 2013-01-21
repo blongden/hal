@@ -443,4 +443,12 @@ EOD;
 
         $this->assertEquals($x->asXml(true), $y->asXml(true));
     }
+
+    public function testHalXmlEntitySetWhenValueSpecifiedInData()
+    {
+        $x = new Hal('/', array('x' => array('value' => 'test')));
+
+        $xml = new \SimpleXMLElement($x->asXml());
+        $this->assertEquals('test', (string)$xml->x);
+    }
 }
