@@ -25,13 +25,25 @@ use \Nocarrier\Hal;
  */
 class HalTest extends \PHPUnit_Framework_TestCase
 {
-    public function testHalResponseReturnsMinimalValidJson()
+    public function testHalJsonResponseAllowsNoSelfLink()
+    {
+        $hal = new Hal();
+        $this->assertEquals('[]', $hal->asJson());
+    }
+
+    public function testHalXmlResponseAllowsNoSelfLink()
+    {
+        $hal = new Hal();
+        $this->assertEquals("<?xml version=\"1.0\"?>\n<resource/>\n", $hal->asXml());
+    }
+
+    public function testHalResponseReturnsSelfLinkJson()
     {
         $hal = new Hal('http://example.com/');
         $this->assertEquals('{"_links":{"self":{"href":"http:\/\/example.com\/"}}}', $hal->asJson());
     }
 
-    public function testHalResponseReturnsMinimalValidXml()
+    public function testHalResponseReturnsSelfLinkXml()
     {
         $hal = new Hal('http://example.com/');
         $this->assertEquals("<?xml version=\"1.0\"?>\n<resource href=\"http://example.com/\"/>\n", $hal->asXml());

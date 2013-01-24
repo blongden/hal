@@ -30,7 +30,9 @@ class HalXmlRenderer implements HalRenderer
     public function render(Hal $resource, $pretty)
     {
         $doc = new \SimpleXMLElement('<resource></resource>');
-        $doc->addAttribute('href', $resource->getUri());
+        if (!is_null($resource->getUri())) {
+            $doc->addAttribute('href', $resource->getUri());
+        }
         $this->linksForXml($doc, $resource->getLinks());
 
         $this->arrayToXml($resource->getData(), $doc);
