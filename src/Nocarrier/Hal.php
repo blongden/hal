@@ -221,4 +221,9 @@ class Hal
         $renderer = new HalXmlRenderer();
         return $renderer->render($this, $pretty);
     }
+
+    public function addCurie($name, $uri)
+    {
+        $this->addLink('curie', $uri, null, array('name' => $name, 'templated' => true));
+    }
 }

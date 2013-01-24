@@ -467,4 +467,14 @@ EOD;
         $this->assertTrue($json->foo);
         $this->assertFalse($json->bar);
     }
+
+    public function testAddCurieConformsToSpecification()
+    {
+        $x = new Hal('/orders');
+        $x->addCurie('acme', 'http://docs.acme.com/relations/{rel}');
+        $obj = json_decode($x->asJson());
+        $this->assertTrue($obj->_links->curie->templated);
+        $this->assertEquals('acme', $obj->_links->curie->name);
+        $this->assertEquals('http://docs.acme.com/relations/{rel}', $obj->_links->curie->href);
+    }
 }
