@@ -21,8 +21,6 @@ namespace Nocarrier;
 class Hal
 {
     /**
-     * uri
-     *
      * @var mixed
      */
     protected $uri;
@@ -39,8 +37,6 @@ class Hal
     protected $data;
 
     /**
-     * resources
-     *
      * @var array
      */
     protected $resources = array();
@@ -114,7 +110,7 @@ class Hal
      * @param string $text
      * @static
      * @access public
-     * @return void
+     * @return Nocarrier\Hal
      */
     public static function fromXml($text)
     {
@@ -203,7 +199,6 @@ class Hal
     }
 
     /**
-     * asJson
      * Return the current object in a application/hal+json format (links and resources)
      *
      * @param bool $pretty Enable pretty-printing
@@ -216,7 +211,6 @@ class Hal
     }
 
     /**
-     * asXml
      * Return the current object in a application/hal+xml format (links and resources)
      *
      * @param bool $pretty Enable pretty-printing
