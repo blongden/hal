@@ -451,4 +451,20 @@ EOD;
         $xml = new \SimpleXMLElement($x->asXml());
         $this->assertEquals('test', (string)$xml->x);
     }
+
+    public function testBooleanOutput()
+    {
+        $hal = new Hal('/', array(
+            'foo' => true,
+            'bar' => false
+        ));
+
+        $xml = new \SimpleXMLElement($hal->asXml());
+        $this->assertSame('1', (string)$xml->foo);
+        $this->assertSame('0', (string)$xml->bar);
+
+        $json = json_decode($hal->asJson());
+        $this->assertTrue($json->foo);
+        $this->assertFalse($json->bar);
+    }
 }
