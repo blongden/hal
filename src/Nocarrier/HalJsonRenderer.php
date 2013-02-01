@@ -30,7 +30,6 @@ class HalJsonRenderer implements HalRenderer
     public function render(Hal $resource, $pretty)
     {
         $options = 0;
-
         if (version_compare(PHP_VERSION, '5.4.0') >= 0 and $pretty) {
             $options = JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT;
         }
@@ -124,7 +123,10 @@ class HalJsonRenderer implements HalRenderer
         $data = $resource->getData();
         $data = $this->stripAttributeMarker($data);
 
-        $data['_links'] = $this->linksForJson($resource->getUri(), $resource->getLinks());
+        if ($resource->getUri()) {
+            $data['_links'] = $this->linksForJson($resource->getUri(), $resource->getLinks());
+        }
+
         foreach($resource->getResources() as $rel => $resources) {
             $data['_embedded'][$rel] = $this->resourcesForJson($resources);
         }

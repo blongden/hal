@@ -71,7 +71,7 @@ class Hal
      * @param mixed $uri
      * @param array $data
      */
-    public function __construct($uri, array $data = array())
+    public function __construct($uri = null, array $data = array())
     {
         $this->uri = $uri;
         $this->data = $data;
