@@ -5,9 +5,6 @@ Nocarrier\Hal
 
 This is a library for creating documents in the [application/hal+json and application/hal+xml][1] hypermedia formats
 
-```php
-```
-
 It requires PHP 5.3 or later.
 
 ```php
