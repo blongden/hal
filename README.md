@@ -12,17 +12,22 @@ It requires PHP 5.3 or later.
 
 ```php
 <?php
-$hal = new Nocarrier\Hal('/orders');
+require_once 'vendor/autoload.php';
+
+use Nocarrier\Hal;
+
+$hal = new Hal('/orders');
 $hal->addLink('next', '/orders?page=2');
 $hal->addLink('search', '/orders?id={order_id}');
 
-$resource = new Nocarrier\Hal(
+$resource = new Hal(
     '/orders/123',
     array(
         'total' => 30.00,
         'currency' => 'USD',
     )
 );
+
 $resource->addLink('customer', '/customer/bob', 'Bob Jones <bob@jones.com>');
 $hal->addResource('order', $resource);
 echo $hal->asJson();
