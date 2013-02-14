@@ -151,7 +151,7 @@ class Hal
      * @param string $rel
      * @param Hal $resource
      */
-    public function addResource($rel, Hal $resource)
+    public function addResource($rel, Hal $resource = null)
     {
         $this->resources[$rel][] = $resource;
         return $this;
