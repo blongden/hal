@@ -86,7 +86,11 @@ class HalJsonRenderer implements HalRenderer
         $data = array();
 
         foreach ($resources as $resource) {
-            $data[] = $this->arrayForJson($resource);
+            $res = $this->arrayForJson($resource);
+
+            if(!empty($res)){
+                $data[] = $res;
+            }
         }
 
         return $data;
@@ -118,8 +122,13 @@ class HalJsonRenderer implements HalRenderer
      * @param Hal $resource
      * @return array
      */
-    protected function arrayForJson(Hal $resource)
+    protected function arrayForJson(Hal $resource = null)
     {
+
+        if ($resource == null){
+            return array();
+        }
+
         $data = $resource->getData();
         $data = $this->stripAttributeMarker($data);
 
