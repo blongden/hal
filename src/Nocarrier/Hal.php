@@ -200,7 +200,8 @@ class Hal
                 if (strpos($rel, $prefix) === 0) {
                     // looks like it is
                     $shortrel = substr($rel, strlen($prefix));
-                    $curie = "{$link->getAttributes()['name']}:$shortrel";
+                    $attrs = $link->getAttributes();
+                    $curie = "{$attrs['name']}:$shortrel";
                     if (array_key_exists($curie, $this->links)) {
                         return $this->links[$curie];
                     }
