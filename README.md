@@ -51,4 +51,4 @@ Alternatively, clone the project and install into your project manually.
 
 Nocarrier\Hal is licensed under the MIT license.
 
-[1]: http://stateless.co/hal_specification.html
+[1]: http://tools.ietf.org/html/draft-kelly-json-hal-05

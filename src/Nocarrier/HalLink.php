@@ -17,6 +17,9 @@ class HalLink
     protected $title;
     protected $attributes;
 
+    /**
+     * The HalLink object. Supported attributes in Hal (specification 5)
+     */
     public function __construct($uri, $title, $attributes)
     {
         $this->uri = $uri;
