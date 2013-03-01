@@ -489,4 +489,30 @@ EOD;
         $this->assertEquals('acme', $obj->_links->curie->name);
         $this->assertEquals('http://docs.acme.com/relations/{rel}', $obj->_links->curie->href);
     }
+
+    public function testGetLinkByRelation()
+    {
+        $x = new Hal('/orders');
+        $x->addLink('test', '/test/orders');
+
+        $links = $x->getLink('test');
+        $this->assertEquals('/test/orders', $links[0]);
+    }
+
+    public function testGetLinkByCurieRelation()
+    {
+        $x = new Hal('/orders');
+        $x->addCurie('acme', 'http://docs.acme.com/relations/{rel}');
+    
+        $x->addLink('acme:test', '/widgets');
+
+        $links = $x->getLink('http://docs.acme.com/relations/test');
+        $this->assertEquals('/widgets', $links[0]);
+    }
+
+    public function testGetLinkReturnsFalseOnFailure()
+    {
+        $x = new Hal('/orders');
+        $this->assertFalse($x->getLink('test'));
+    }
 }

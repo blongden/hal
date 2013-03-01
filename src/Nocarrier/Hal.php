@@ -138,6 +138,8 @@ class Hal
      * @param string $uri
      * @param string $title
      * @param array $attributes Other attributes, as defined by HAL spec and RFC 5988
+     * @return Hal
+     *
      */
     public function addLink($rel, $uri, $title = null, array $attributes = array())
     {
@@ -176,6 +178,37 @@ class Hal
     public function getLinks()
     {
         return $this->links;
+    }
+
+    /**
+     * Lookup and return an array of HalLink objects for a given relation.
+     * Will also resolve CURIE rels if required.
+     *
+     * @param string $rel The link relation required
+     * @return array|false
+     */
+    public function getLink($rel)
+    {
+        if (array_key_exists($rel, $this->links)) {
+            return $this->links[$rel];
+        }
+
+        // this might be a curie link
+        if (array_key_exists('curie', $this->links)) {
+            foreach ($this->links['curie'] as $link) {
+                $prefix = strstr($link->getUri(), '{rel}', true);
+                if (strpos($rel, $prefix) === 0) {
+                    // looks like it is
+                    $shortrel = substr($rel, strlen($prefix));
+                    $curie = "{$link->getAttributes()['name']}:$shortrel";
+                    if (array_key_exists($curie, $this->links)) {
+                        return $this->links[$curie];
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -222,8 +255,20 @@ class Hal
         return $renderer->render($this, $pretty);
     }
 
+    /**
+     * Create a CURIE link template, used for abbreviating custom link 
+     * relations.
+     *
+     * e.g,
+     * $hal->addCurie('acme', 'http://.../rels/{rel}');
+     * $hal->addLink('acme:test', 'http://.../test');
+     *
+     * @param name string
+     * @param uri string
+     * @return Hal
+     */
     public function addCurie($name, $uri)
     {
-        $this->addLink('curie', $uri, null, array('name' => $name, 'templated' => true));
+        return $this->addLink('curie', $uri, null, array('name' => $name, 'templated' => true));
     }
 }
