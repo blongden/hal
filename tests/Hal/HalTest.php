@@ -514,5 +514,22 @@ EOD;
     {
         $x = new Hal('/orders');
         $this->assertFalse($x->getLink('test'));
+    
+    public function testJSONEmptyEmbeddedCollection(){
+        $x = new Hal();
+        $x->addResource('collection');
+
+        $this->assertEquals('{"_embedded":{"collection":[]}}', $x->asJson());
+    }
+
+    public function testXMLEmptyEmbeddedCollection(){
+        $x = new Hal();
+        $x->addResource('collection');
+        $response = <<<EOD
+<?xml version="1.0"?>
+<resource><resource rel="collection"/></resource>
+
+EOD;
+        $this->assertEquals($response, $x->asXml());
     }
 }

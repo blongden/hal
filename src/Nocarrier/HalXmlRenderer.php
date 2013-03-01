@@ -82,7 +82,8 @@ class HalXmlRenderer implements HalRenderer
      * @access protected
      * @return void
      */
-    protected function arrayToXml(array $data, \SimpleXmlElement $element, $parent=null) {
+    protected function arrayToXml(array $data, \SimpleXmlElement $element, $parent=null)
+    {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 if (!is_numeric($key)) {
@@ -125,17 +126,21 @@ class HalXmlRenderer implements HalRenderer
     protected function resourcesForXml(\SimpleXmlElement $doc, $rel, array $resources)
     {
         foreach($resources as $resource) {
+
             $element = $doc->addChild('resource');
             $element->addAttribute('rel', $rel);
-            $element->addAttribute('href', $resource->getUri());
 
-            $this->linksForXml($element, $resource->getLinks());
+            if ($resource) {
+                $element->addAttribute('href', $resource->getUri());
 
-            foreach($resource->getResources() as $innerRel => $innerRes) {
-                $this->resourcesForXml($element, $innerRel, $innerRes);
+                $this->linksForXml($element, $resource->getLinks());
+
+                foreach($resource->getResources() as $innerRel => $innerRes) {
+                    $this->resourcesForXml($element, $innerRel, $innerRes);
+                }
+
+                $this->arrayToXml($resource->getData(), $element);
             }
-
-            $this->arrayToXml($resource->getData(), $element);
         }
     }
 }
