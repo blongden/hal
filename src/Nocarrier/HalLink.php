@@ -19,7 +19,6 @@ class HalLink
 
     public function __construct($uri, $title, $attributes)
     {
-        // TODO: validate uri
         $this->uri = $uri;
         $this->title = $title;
         $this->attributes = $attributes;

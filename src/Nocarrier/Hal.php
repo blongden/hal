@@ -194,8 +194,8 @@ class Hal
         }
 
         // this might be a curie link
-        if (array_key_exists('curie', $this->links)) {
-            foreach ($this->links['curie'] as $link) {
+        if (array_key_exists('curies', $this->links)) {
+            foreach ($this->links['curies'] as $link) {
                 $prefix = strstr($link->getUri(), '{rel}', true);
                 if (strpos($rel, $prefix) === 0) {
                     // looks like it is
@@ -269,6 +269,6 @@ class Hal
      */
     public function addCurie($name, $uri)
     {
-        return $this->addLink('curie', $uri, null, array('name' => $name, 'templated' => true));
+        return $this->addLink('curies', $uri, null, array('name' => $name, 'templated' => true));
     }
 }
