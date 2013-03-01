@@ -39,4 +39,9 @@ class HalLink
     {
         return $this->attributes;
     }
+
+    public function __toString()
+    {
+        return $this->uri;
+    }
 }
