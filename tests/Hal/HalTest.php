@@ -514,7 +514,8 @@ EOD;
     {
         $x = new Hal('/orders');
         $this->assertFalse($x->getLink('test'));
-    
+    }
+
     public function testJSONEmptyEmbeddedCollection(){
         $x = new Hal();
         $x->addResource('collection');
