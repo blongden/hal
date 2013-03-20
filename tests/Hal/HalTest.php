@@ -485,9 +485,10 @@ EOD;
         $x = new Hal('/orders');
         $x->addCurie('acme', 'http://docs.acme.com/relations/{rel}');
         $obj = json_decode($x->asJson());
-        $this->assertTrue($obj->_links->curies->templated);
-        $this->assertEquals('acme', $obj->_links->curies->name);
-        $this->assertEquals('http://docs.acme.com/relations/{rel}', $obj->_links->curies->href);
+        $this->assertInternalType('array', $obj->_links->curies);
+        $this->assertTrue($obj->_links->curies[0]->templated);
+        $this->assertEquals('acme', $obj->_links->curies[0]->name);
+        $this->assertEquals('http://docs.acme.com/relations/{rel}', $obj->_links->curies[0]->href);
     }
 
     public function testGetLinkByRelation()
