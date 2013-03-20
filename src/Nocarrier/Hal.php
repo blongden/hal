@@ -99,7 +99,7 @@ class Hal
 
         $hal = new Hal($uri, $data);
         foreach ($links as $rel => $link) {
-            $hal->addLink($rel, $link['href'], $link['title']);
+            $hal->addLink($rel, $link['href'], isset($link['title']) ? $link['title'] : null);
         }
         return $hal;
     }
@@ -124,7 +124,7 @@ class Hal
 
         $hal = new Hal($data->attributes()->href, (array)$children);
         foreach ($links as $link) {
-            $hal->addLink((string)$link->attributes()->rel, (string)$link->attributes()->href, (string)$link->attributes()->title);
+            $hal->addLink((string)$link->attributes()->rel, (string)$link->attributes()->href, isset($link->attributes()->title) ? (string)$link->attributes()->title : null);
         }
 
         return $hal;
