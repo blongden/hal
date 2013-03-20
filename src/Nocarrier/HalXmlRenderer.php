@@ -56,7 +56,7 @@ class HalXmlRenderer implements HalRenderer
      * @param array $links
      * @return void
      */
-    protected function linksForXml(\SimpleXmlElement $doc, array $links)
+    protected function linksForXml(\SimpleXmlElement $doc, $links)
     {
         foreach($links as $rel => $links) {
             foreach ($links as $link) {

@@ -50,7 +50,7 @@ class Hal
      *
      * @var array
      */
-    protected $links = array();
+    protected $links = null;
 
     /**
      * construct a new Hal object from an array of data. You can markup the
@@ -75,6 +75,8 @@ class Hal
     {
         $this->uri = $uri;
         $this->data = $data;
+
+        $this->links = new HalLinkContainer();
     }
 
     /**
@@ -193,23 +195,7 @@ class Hal
             return $this->links[$rel];
         }
 
-        // this might be a curie link
-        if (array_key_exists('curies', $this->links)) {
-            foreach ($this->links['curies'] as $link) {
-                $prefix = strstr($link->getUri(), '{rel}', true);
-                if (strpos($rel, $prefix) === 0) {
-                    // looks like it is
-                    $shortrel = substr($rel, strlen($prefix));
-                    $attrs = $link->getAttributes();
-                    $curie = "{$attrs['name']}:$shortrel";
-                    if (array_key_exists($curie, $this->links)) {
-                        return $this->links[$curie];
-                    }
-                }
-            }
-        }
-
-        return false;
+        return $this->links->getCurie($rel);
     }
 
     /**
