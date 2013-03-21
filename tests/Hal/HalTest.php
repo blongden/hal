@@ -452,8 +452,7 @@ EOD;
         $x = new Hal('/test', array('name' => "Ben Longden"));
         $x->addLink('a', '/a', 'A Test');
         $y = Hal::fromXml($x->asXml());
-
-        $this->assertEquals($x->asXml(true), $y->asXml(true));
+        $this->assertEquals($x->asXml(), $y->asXml());
     }
 
     public function testHalXmlEntitySetWhenValueSpecifiedInData()
@@ -533,5 +532,21 @@ EOD;
 
 EOD;
         $this->assertEquals($response, $x->asXml());
+    }
+
+    public function testLinksWithAttributesUnserialiseCorrectlyJson()
+    {
+        $x = new Hal('/');
+        $x->addCurie('x:test', 'http://test');
+
+        $this->assertEquals($x->asJson(), Hal::fromJson($x->asJson())->asJson());
+    }
+
+    public function testLinksWithAttributesUnserialiseCorrectlyXml()
+    {
+        $x = new Hal('/');
+        $x->addCurie('x:test', 'http://test');
+
+        $this->assertEquals($x->asXml(), Hal::fromXml($x->asXml())->asXml());
     }
 }

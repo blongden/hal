@@ -98,8 +98,17 @@ class Hal
         unset ($data['_embedded']);
 
         $hal = new Hal($uri, $data);
-        foreach ($links as $rel => $link) {
-            $hal->addLink($rel, $link['href'], isset($link['title']) ? $link['title'] : null);
+        foreach ($links as $rel => $links) {
+            if (!isset($links[0]) or !is_array($links[0])) {
+                $links = array($links);
+            }
+
+            foreach ($links as $link) {
+                $href = $link['href'];
+                $title = isset($link['title']) ? $link['title'] : null;
+                unset($link['href'], $link['title']);
+                $hal->addLink($rel, $href, $title, $link);
+            }
         }
         return $hal;
     }
@@ -123,8 +132,19 @@ class Hal
         unset ($children->resource);
 
         $hal = new Hal($data->attributes()->href, (array)$children);
-        foreach ($links as $link) {
-            $hal->addLink((string)$link->attributes()->rel, (string)$link->attributes()->href, isset($link->attributes()->title) ? (string)$link->attributes()->title : null);
+        foreach ($links as $links) {
+            if (!is_array($links)) {
+                $links = array($links);
+            }
+            foreach($links as $link) {
+                $attributes = (array)$link->attributes();
+                $attributes = $attributes['@attributes'];
+                $rel = $attributes['rel'];
+                $href = $attributes['href'];
+                $title = isset($attributes['title']) ? $attributes['title'] : null;
+                unset($attributes['rel'], $attributes['href'], $attributes['title']);
+                $hal->addLink($rel, $href, $title, $attributes);
+            }
         }
 
         return $hal;
