@@ -546,7 +546,7 @@ EOD;
         $this->assertEquals($x->asXml(), Hal::fromXml($x->asXml())->asXml());
     }
 
-    
+
     /**
      * @expectedException PHPUnit_Framework_Error
      */

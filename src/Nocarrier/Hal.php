@@ -109,9 +109,8 @@ class Hal
 
             foreach ($links as $link) {
                 $href = $link['href'];
-                $title = isset($link['title']) ? $link['title'] : null;
                 unset($link['href'], $link['title']);
-                $hal->addLink($rel, $href, $title, $link);
+                $hal->addLink($rel, $href, $link);
             }
         }
         return $hal;
@@ -145,9 +144,8 @@ class Hal
                 $attributes = $attributes['@attributes'];
                 $rel = $attributes['rel'];
                 $href = $attributes['href'];
-                $title = isset($attributes['title']) ? $attributes['title'] : null;
-                unset($attributes['rel'], $attributes['href'], $attributes['title']);
-                $hal->addLink($rel, $href, $title, $attributes);
+                unset($attributes['rel'], $attributes['href']);
+                $hal->addLink($rel, $href, $attributes);
             }
         }
 
@@ -212,7 +210,7 @@ class Hal
      * Return an array of Nocarrier\HalLink objects representing resources
      * related to this one.
      *
-     * @return array
+     * @return HalLinkCollection
      */
     public function getLinks()
     {
@@ -228,11 +226,7 @@ class Hal
      */
     public function getLink($rel)
     {
-        if (array_key_exists($rel, $this->links)) {
-            return $this->links[$rel];
-        }
-
-        return $this->links->getCurie($rel);
+        return $this->links->get($rel);
     }
 
     /**
