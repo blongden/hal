@@ -11,6 +11,12 @@
  */
 namespace Nocarrier;
 
+/**
+ * The HalLink class
+ *
+ * @package Nocarrier
+ * @author Ben Longden <ben@nocarrier.co.uk>
+ */
 class HalLink
 {
     /**
@@ -36,6 +42,9 @@ class HalLink
 
     /**
      * The HalLink object. Supported attributes in Hal (specification section 5)
+     *
+     * @param $uri the uri represented by this link
+     * @param $attributes any additional attributes
      */
     public function __construct($uri, $attributes)
     {
@@ -43,21 +52,42 @@ class HalLink
         $this->attributes = $attributes;
     }
 
+    /**
+     * Return the URI from this link
+     *
+     * @return string
+     */
     public function getUri()
     {
         return $this->uri;
     }
 
+    /**
+     * Return the title attribute for this link
+     *
+     * @deprecated
+     * @return string
+     */
     public function getTitle()
     {
         return isset($this->attributes['title']) ? $this->attributes['title'] : null;
     }
 
+    /**
+     * Returns the attributes for this link
+     *
+     * return array
+     */
     public function getAttributes()
     {
         return $this->attributes;
     }
 
+    /**
+     * The string representation of this link (the URI)
+     *
+     * return string
+     */
     public function __toString()
     {
         return $this->uri;
