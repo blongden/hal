@@ -52,11 +52,11 @@ class HalXmlRenderer implements HalRenderer
      * linksForXml
      * Add links in hal+xml format to a SimpleXmlElement object
      *
-     * @param SimpleXmlElement $doc
-     * @param array $links
+     * @param \SimpleXmlElement $doc
+     * @param HalLinkContainer $links
      * @return void
      */
-    protected function linksForXml(\SimpleXmlElement $doc, $links)
+    protected function linksForXml(\SimpleXmlElement $doc, HalLinkContainer $links)
     {
         foreach($links as $rel => $links) {
             foreach ($links as $link) {
@@ -74,7 +74,7 @@ class HalXmlRenderer implements HalRenderer
      * arrayToXml
      *
      * @param array $data
-     * @param SimpleXmlElement $element
+     * @param \SimpleXmlElement $element
      * @param mixed $parent
      * @access protected
      * @return void
@@ -116,7 +116,7 @@ class HalXmlRenderer implements HalRenderer
      * resourcesForXml
      * Add resources in hal+xml format (identified by $rel) to a SimpleXmlElement object
      *
-     * @param SimpleXmlElement $doc
+     * @param \SimpleXmlElement $doc
      * @param mixed $rel
      * @param array $resources
      */
