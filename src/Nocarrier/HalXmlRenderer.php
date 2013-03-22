@@ -63,9 +63,6 @@ class HalXmlRenderer implements HalRenderer
                 $element = $doc->addChild('link');
                 $element->addAttribute('rel', $rel);
                 $element->addAttribute('href', $link->getUri());
-                if (!is_null($link->getTitle())) {
-                    $element->addAttribute('title', $link->getTitle());
-                }
                 foreach ($link->getAttributes() as $attribute => $value) {
                     $element->addAttribute($attribute, $value);
                 }

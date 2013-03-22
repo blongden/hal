@@ -13,17 +13,33 @@ namespace Nocarrier;
 
 class HalLink
 {
+    /**
+     * The URI represented by this HalLink
+     *
+     * @value string
+     */
     protected $uri;
-    protected $title;
+
+    /**
+     * Any attributes on this link
+     * array(
+     *  'templated' => 0,
+     *  'type' => 'application/hal+json',
+     *  'deprecation' => 1,
+     *  'name' => 'latest',
+     *  'profile' => 'http://.../profile/order',
+     *  'title' => 'The latest order',
+     *  'hreflang' => 'en'
+     * )
+     */
     protected $attributes;
 
     /**
-     * The HalLink object. Supported attributes in Hal (specification 5)
+     * The HalLink object. Supported attributes in Hal (specification section 5)
      */
-    public function __construct($uri, $title, $attributes)
+    public function __construct($uri, $attributes)
     {
         $this->uri = $uri;
-        $this->title = $title;
         $this->attributes = $attributes;
     }
 
@@ -34,7 +50,7 @@ class HalLink
 
     public function getTitle()
     {
-        return $this->title;
+        return isset($this->attributes['title']) ? $this->attributes['title'] : null;
     }
 
     public function getAttributes()
