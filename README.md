@@ -25,7 +25,7 @@ $resource = new Hal(
     )
 );
 
-$resource->addLink('customer', '/customer/bob', 'Bob Jones <bob@jones.com>');
+$resource->addLink('customer', '/customer/bob', array('title' => 'Bob Jones <bob@jones.com>'));
 $hal->addResource('order', $resource);
 echo $hal->asJson();
 echo $hal->asXml();
