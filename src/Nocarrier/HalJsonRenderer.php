@@ -46,7 +46,11 @@ class HalJsonRenderer implements HalRenderer
      */
     protected function linksForJson($uri, $links)
     {
-        $data = array('self' => array('href' => $uri));
+        $data = array();
+
+        if ($uri) {
+            $data['self'] = array('href' => $uri);
+        }
 
         foreach($links as $rel => $links) {
             if (count($links) === 1 && $rel !== 'curies') {
@@ -91,7 +95,7 @@ class HalJsonRenderer implements HalRenderer
     }
 
     /**
-     * Remove the @ prefix from keys that denotes an attribute in XML. This 
+     * Remove the @ prefix from keys that denotes an attribute in XML. This
      * cannot be represented in JSON, so it's effectively ignored.
      *
      * @param array $data the array to strip @ from the keys
@@ -101,15 +105,21 @@ class HalJsonRenderer implements HalRenderer
     {
         foreach ($data as $key => $value) {
             if (substr($key, 0, 5) == '@xml:') {
-                $data[substr($key, 5)] = $value;
                 unset ($data[$key]);
+                $key = substr($key, 5);
+                $data[$key] = $value;
             } elseif (substr($key, 0, 1) == '@') {
-                $data[substr($key, 1)] = $value;
                 unset ($data[$key]);
+                $key = substr($key, 1);
+                $data[$key] = $value;
             }
 
             if (is_array($value)) {
                 $data[$key] = $this->stripAttributeMarker($value);
+
+                if (empty($data[$key])) {
+                    unset($data[$key]);
+                }
             }
         }
 
@@ -133,8 +143,10 @@ class HalJsonRenderer implements HalRenderer
         $data = $resource->getData();
         $data = $this->stripAttributeMarker($data);
 
-        if ($resource->getUri()) {
-            $data['_links'] = $this->linksForJson($resource->getUri(), $resource->getLinks());
+        $links = $this->linksForJson($resource->getUri(), $resource->getLinks());
+
+        if (!empty($links)) {
+            $data['_links'] = $links;
         }
 
         foreach($resource->getResources() as $rel => $resources) {
