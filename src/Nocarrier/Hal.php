@@ -153,35 +153,17 @@ class Hal
     }
 
     /**
-     * Add a link to the resource, identified by $rel, located at $uri, with an
-     * optional $title.
-     *
-     * The implementation here may look a little strange - this is because the 
-     * $title parameter has been rolled into $attributes (it's now optional).
-     *
-     * $title will be removed in the next major release (likely 1.0.0).
-     *
-     * This implementation allows for $attributes to be passed as the 3rd 
-     * parameter so your code can be updated immediately to use only $rel, $uri 
-     * and $attributes.
+     * Add a link to the resource, identified by $rel, located at $uri
      *
      * @param string $rel
      * @param string $uri
-     * @param string $title
      * @param array $attributes Other attributes, as defined by HAL spec and RFC 5988
      * @return Hal
      *
      */
-    public function addLink($rel, $uri, $title = null, array $attributes = array())
+    public function addLink($rel, $uri, array $attributes = array())
     {
-        if (!is_array($title) and !is_null($title)) {
-            trigger_error('Using $title as the 3rd argument to addLink is deprecated and will be removed in the next version of Nocarrier\Hal. Use array("title" => "my title") instead in $attributes.', E_USER_DEPRECATED);
-            $title = array('title' => $title);
-        } elseif (is_null($title)) {
-            $title = array();
-        }
-
-        $this->links[$rel][] = new HalLink($uri, array_merge($title, $attributes));
+        $this->links[$rel][] = new HalLink($uri, $attributes);
         return $this;
     }
 

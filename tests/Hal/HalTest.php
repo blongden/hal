@@ -546,24 +546,4 @@ EOD;
         $this->assertEquals($x->asXml(), Hal::fromXml($x->asXml())->asXml());
     }
 
-
-    /**
-     * @expectedException PHPUnit_Framework_Error
-     */
-    public function testOldStyleAddLinkThrowsError()
-    {
-        $x = new Hal('/');
-        $x->addLink('test', 'http://.../test', 'This should cause an error');
-    }
-    
-    public function testOldStyleAddLinkSetsTitle()
-    {
-        $x = new Hal('/');
-        // Suppress the error (tested above) so phpunit doesn't throw an 
-        // exception and stop the test
-        @$x->addLink('test', 'http://.../test', 'This should cause an error');
-        $link = $x->getLink('test');
-        $attributes = $link[0]->getAttributes();
-        $this->assertEquals('This should cause an error', $attributes['title']);
-    }
 }
