@@ -134,7 +134,11 @@ class HalXmlRenderer implements HalRenderer
             $element->addAttribute('rel', $rel);
 
             if ($resource) {
-                $element->addAttribute('href', $resource->getUri());
+                $href = $resource->getUri();
+
+                if (!empty($href)) {
+                    $element->addAttribute('href', $href);
+                }
 
                 $this->linksForXml($element, $resource->getLinks());
 
