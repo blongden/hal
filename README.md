@@ -25,7 +25,7 @@ $resource = new Hal(
     )
 );
 
-$resource->addLink('customer', '/customer/bob', 'Bob Jones <bob@jones.com>');
+$resource->addLink('customer', '/customer/bob', array('title' => 'Bob Jones <bob@jones.com>'));
 $hal->addResource('order', $resource);
 echo $hal->asJson();
 echo $hal->asXml();
@@ -51,4 +51,4 @@ Alternatively, clone the project and install into your project manually.
 
 Nocarrier\Hal is licensed under the MIT license.
 
-[1]: http://stateless.co/hal_specification.html
+[1]: http://tools.ietf.org/html/draft-kelly-json-hal-05

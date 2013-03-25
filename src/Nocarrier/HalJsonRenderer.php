@@ -49,11 +49,8 @@ class HalJsonRenderer implements HalRenderer
         $data = array('self' => array('href' => $uri));
 
         foreach($links as $rel => $links) {
-            if (count($links) === 1) {
+            if (count($links) === 1 && $rel !== 'curies') {
                 $data[$rel] = array('href' => $links[0]->getUri());
-                if (!is_null($links[0]->getTitle())) {
-                    $data[$rel]['title'] = $links[0]->getTitle();
-                }
                 foreach ($links[0]->getAttributes() as $attribute => $value) {
                     $data[$rel][$attribute] = $value;
                 }
@@ -61,9 +58,6 @@ class HalJsonRenderer implements HalRenderer
                 $data[$rel] = array();
                 foreach ($links as $link) {
                     $item = array('href' => $link->getUri());
-                    if (!is_null($link->getTitle())) {
-                        $item['title'] = $link->getTitle();
-                    }
                     foreach ($link->getAttributes() as $attribute => $value) {
                         $item[$attribute] = $value;
                     }
@@ -96,6 +90,13 @@ class HalJsonRenderer implements HalRenderer
         return $data;
     }
 
+    /**
+     * Remove the @ prefix from keys that denotes an attribute in XML. This 
+     * cannot be represented in JSON, so it's effectively ignored.
+     *
+     * @param array $data the array to strip @ from the keys
+     * @return array
+     */
     protected function stripAttributeMarker(array $data)
     {
         foreach ($data as $key => $value) {

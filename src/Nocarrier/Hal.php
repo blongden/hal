@@ -21,7 +21,8 @@ namespace Nocarrier;
 class Hal
 {
     /**
-     * @var mixed
+     * The uri represented by this representation
+     * @var string
      */
     protected $uri;
 
@@ -37,6 +38,7 @@ class Hal
     protected $data;
 
     /**
+     * An array of embedded Hal objects representing embedded resources.
      * @var array
      */
     protected $resources = array();
@@ -50,7 +52,7 @@ class Hal
      *
      * @var array
      */
-    protected $links = array();
+    protected $links = null;
 
     /**
      * construct a new Hal object from an array of data. You can markup the
@@ -75,6 +77,8 @@ class Hal
     {
         $this->uri = $uri;
         $this->data = $data;
+
+        $this->links = new HalLinkContainer();
     }
 
     /**
@@ -98,8 +102,16 @@ class Hal
         unset ($data['_embedded']);
 
         $hal = new Hal($uri, $data);
-        foreach ($links as $rel => $link) {
-            $hal->addLink($rel, $link['href'], isset($link['title']) ? $link['title'] : null);
+        foreach ($links as $rel => $links) {
+            if (!isset($links[0]) or !is_array($links[0])) {
+                $links = array($links);
+            }
+
+            foreach ($links as $link) {
+                $href = $link['href'];
+                unset($link['href'], $link['title']);
+                $hal->addLink($rel, $href, $link);
+            }
         }
         return $hal;
     }
@@ -123,8 +135,18 @@ class Hal
         unset ($children->resource);
 
         $hal = new Hal($data->attributes()->href, (array)$children);
-        foreach ($links as $link) {
-            $hal->addLink((string)$link->attributes()->rel, (string)$link->attributes()->href, isset($link->attributes()->title) ? (string)$link->attributes()->title : null);
+        foreach ($links as $links) {
+            if (!is_array($links)) {
+                $links = array($links);
+            }
+            foreach($links as $link) {
+                $attributes = (array)$link->attributes();
+                $attributes = $attributes['@attributes'];
+                $rel = $attributes['rel'];
+                $href = $attributes['href'];
+                unset($attributes['rel'], $attributes['href']);
+                $hal->addLink($rel, $href, $attributes);
+            }
         }
 
         return $hal;
@@ -132,16 +154,34 @@ class Hal
 
     /**
      * Add a link to the resource, identified by $rel, located at $uri, with an
-     * optional $title
+     * optional $title.
+     *
+     * The implementation here may look a little strange - this is because the 
+     * $title parameter has been rolled into $attributes (it's now optional).
+     *
+     * $title will be removed in the next major release (likely 1.0.0).
+     *
+     * This implementation allows for $attributes to be passed as the 3rd 
+     * parameter so your code can be updated immediately to use only $rel, $uri 
+     * and $attributes.
      *
      * @param string $rel
      * @param string $uri
      * @param string $title
      * @param array $attributes Other attributes, as defined by HAL spec and RFC 5988
+     * @return Hal
+     *
      */
     public function addLink($rel, $uri, $title = null, array $attributes = array())
     {
-        $this->links[$rel][] = new HalLink($uri, $title, $attributes);
+        if (!is_array($title) and !is_null($title)) {
+            trigger_error('Using $title as the 3rd argument to addLink is deprecated and will be removed in the next version of Nocarrier\Hal. Use array("title" => "my title") instead in $attributes.', E_USER_DEPRECATED);
+            $title = array('title' => $title);
+        } elseif (is_null($title)) {
+            $title = array();
+        }
+
+        $this->links[$rel][] = new HalLink($uri, array_merge($title, $attributes));
         return $this;
     }
 
@@ -171,11 +211,23 @@ class Hal
      * Return an array of Nocarrier\HalLink objects representing resources
      * related to this one.
      *
-     * @return array
+     * @return HalLinkCollection
      */
     public function getLinks()
     {
         return $this->links;
+    }
+
+    /**
+     * Lookup and return an array of HalLink objects for a given relation.
+     * Will also resolve CURIE rels if required.
+     *
+     * @param string $rel The link relation required
+     * @return array|false
+     */
+    public function getLink($rel)
+    {
+        return $this->links->get($rel);
     }
 
     /**
@@ -220,5 +272,22 @@ class Hal
     {
         $renderer = new HalXmlRenderer();
         return $renderer->render($this, $pretty);
+    }
+
+    /**
+     * Create a CURIE link template, used for abbreviating custom link 
+     * relations.
+     *
+     * e.g,
+     * $hal->addCurie('acme', 'http://.../rels/{rel}');
+     * $hal->addLink('acme:test', 'http://.../test');
+     *
+     * @param name string
+     * @param uri string
+     * @return Hal
+     */
+    public function addCurie($name, $uri)
+    {
+        return $this->addLink('curies', $uri, array('name' => $name, 'templated' => true));
     }
 }

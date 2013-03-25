@@ -52,35 +52,33 @@ class HalTest extends \PHPUnit_Framework_TestCase
     public function testAddLinkJsonResponse()
     {
         $hal = new Hal('http://example.com/');
-        $hal->addLink('test', '/test/1', 'My Test');
+        $hal->addLink('test', '/test/1');
 
         $result = json_decode($hal->asJson());
         $this->assertInstanceOf('StdClass', $result->_links->test);
         $this->assertEquals('/test/1', $result->_links->test->href);
-        $this->assertEquals('My Test', $result->_links->test->title);
     }
 
     public function testAddLinkXmlResponse()
     {
         $hal = new Hal('http://example.com/');
-        $hal->addLink('test', '/test/1', 'My Test');
+        $hal->addLink('test', '/test/1');
 
         $result = new \SimpleXmlElement($hal->asXml());
         $data = $result->link->attributes();
         $this->assertEquals('test', $data['rel']);
         $this->assertEquals('/test/1', $data['href']);
-        $this->assertEquals('My Test', $data['title']);
     }
 
     public function testXmlPrettyPrintResponse()
     {
         $hal = new Hal('http://example.com/');
-        $hal->addLink('test', '/test/1', 'My Test');
+        $hal->addLink('test', '/test/1');
 
         $response = <<<EOD
 <?xml version="1.0"?>
 <resource href="http://example.com/">
-  <link rel="test" href="/test/1" title="My Test"/>
+  <link rel="test" href="/test/1"/>
 </resource>
 
 EOD;
@@ -180,7 +178,7 @@ EOD;
                 )
             )
         );
-        $resource->addLink('customer', '/customer/bob', 'Bob Jones <bob@jones.com>');
+        $resource->addLink('customer', '/customer/bob');
         $hal->addResource('order', $resource);
         $result = new \SimpleXmlElement($hal->asXml());
         $this->assertEquals(30, (string)$result->resource->tests[0]->total);
@@ -207,28 +205,24 @@ EOD;
     public function testAddArrayOfLinksInJson()
     {
         $hal = new Hal('/');
-        $hal->addLink('members', '/member/1', 'Member 1');
-        $hal->addLink('members', '/member/2', 'Member 2');
+        $hal->addLink('members', '/member/1');
+        $hal->addLink('members', '/member/2');
 
         $result = json_decode($hal->asJson());
         $this->assertEquals('/member/1', $result->_links->members[0]->href);
         $this->assertEquals('/member/2', $result->_links->members[1]->href);
-        $this->assertEquals('Member 1', $result->_links->members[0]->title);
-        $this->assertEquals('Member 2', $result->_links->members[1]->title);
     }
 
     public function testAddArrayOfLinksInXml()
     {
         $hal = new Hal('/');
-        $hal->addLink('members', '/member/1', 'Member 1');
-        $hal->addLink('members', '/member/2', 'Member 2');
+        $hal->addLink('members', '/member/1');
+        $hal->addLink('members', '/member/2');
         $result = new \SimpleXmlElement($hal->asXml());
         $this->assertEquals('members', $result->link[0]->attributes()->rel);
         $this->assertEquals('members', $result->link[1]->attributes()->rel);
         $this->assertEquals('/member/1', $result->link[0]->attributes()->href);
         $this->assertEquals('/member/2', $result->link[1]->attributes()->href);
-        $this->assertEquals('Member 1', $result->link[0]->attributes()->title);
-        $this->assertEquals('Member 2', $result->link[1]->attributes()->title);
     }
 
     public function testAttributesInXmlRepresentation()
@@ -262,7 +256,7 @@ EOD;
     public function testLinkAttributesInJson()
     {
         $hal = new Hal('http://example.com/');
-        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+        $hal->addLink('test', '/test/{?id}', array(
             'anchor' => '#foo',
             'rev' => 'canonical',
             'hreflang' => 'en',
@@ -270,6 +264,7 @@ EOD;
             'type' => 'text/html',
             'templated' => 'true',
             'name' => 'ex',
+            'title' => 'My Test'
         ));
 
         $result = json_decode($hal->asJson());
@@ -280,6 +275,7 @@ EOD;
         $this->assertEquals('text/html', $result->_links->test->type);
         $this->assertEquals('true', $result->_links->test->templated);
         $this->assertEquals('ex', $result->_links->test->name);
+        $this->assertEquals('My Test', $result->_links->test->title);
     }
 
     /**
@@ -289,7 +285,7 @@ EOD;
     public function testLinkAttributesInJsonWithArrayOfLinks()
     {
         $hal = new Hal('http://example.com/');
-        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+        $hal->addLink('test', '/test/{?id}', array(
             'anchor' => '#foo1',
             'rev' => 'canonical1',
             'hreflang' => 'en1',
@@ -298,7 +294,7 @@ EOD;
             'templated' => 'true1',
             'name' => 'ex1',
         ));
-        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+        $hal->addLink('test', '/test/{?id}', array(
             'anchor' => '#foo2',
             'rev' => 'canonical2',
             'hreflang' => 'en2',
@@ -329,7 +325,7 @@ EOD;
     public function testLinkAttributesInXml()
     {
         $hal = new Hal('http://example.com/');
-        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+        $hal->addLink('test', '/test/{?id}', array(
             'anchor' => '#foo',
             'rev' => 'canonical',
             'hreflang' => 'en',
@@ -357,7 +353,7 @@ EOD;
     public function testLinkAttributesInXmlWithArrayOfLinks()
     {
         $hal = new Hal('http://example.com/');
-        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+        $hal->addLink('test', '/test/{?id}', array(
             'anchor' => '#foo1',
             'rev' => 'canonical1',
             'hreflang' => 'en1',
@@ -366,7 +362,7 @@ EOD;
             'templated' => 'true1',
             'name' => 'ex1',
         ));
-        $hal->addLink('test', '/test/{?id}', 'My Test', array(
+        $hal->addLink('test', '/test/{?id}', array(
             'anchor' => '#foo2',
             'rev' => 'canonical2',
             'hreflang' => 'en2',
@@ -441,7 +437,7 @@ EOD;
     public function testHalJsonDecodeWithLinks()
     {
         $x = new Hal('/test', array('name' => "Ben Longden"));
-        $x->addLink('a', '/a', 'A Test');
+        $x->addLink('a', '/a');
         $y = Hal::fromJson($x->asJson());
 
         $this->assertEquals($x->asJson(true), $y->asJson(true));
@@ -450,10 +446,9 @@ EOD;
     public function testHalXmlDecodeWithLinks()
     {
         $x = new Hal('/test', array('name' => "Ben Longden"));
-        $x->addLink('a', '/a', 'A Test');
+        $x->addLink('a', '/a');
         $y = Hal::fromXml($x->asXml());
-
-        $this->assertEquals($x->asXml(true), $y->asXml(true));
+        $this->assertEquals($x->asXml(), $y->asXml());
     }
 
     public function testHalXmlEntitySetWhenValueSpecifiedInData()
@@ -479,16 +474,53 @@ EOD;
         $this->assertTrue($json->foo);
         $this->assertFalse($json->bar);
     }
-    
-    public function testJSONEmptyEmbeddedCollection(){
-    	$x = new Hal();
-		$x->addResource('collection');
-    	
-    	$this->assertEquals('{"_embedded":{"collection":[]}}', $x->asJson());
+
+    public function testAddCurieConformsToSpecification()
+    {
+        $x = new Hal('/orders');
+        $x->addCurie('acme', 'http://docs.acme.com/relations/{rel}');
+        $obj = json_decode($x->asJson());
+        $this->assertInternalType('array', $obj->_links->curies);
+        $this->assertTrue($obj->_links->curies[0]->templated);
+        $this->assertEquals('acme', $obj->_links->curies[0]->name);
+        $this->assertEquals('http://docs.acme.com/relations/{rel}', $obj->_links->curies[0]->href);
     }
+
+    public function testGetLinkByRelation()
+    {
+        $x = new Hal('/orders');
+        $x->addLink('test', '/test/orders');
+
+        $links = $x->getLink('test');
+        $this->assertEquals('/test/orders', $links[0]);
+    }
+
+    public function testGetLinkByCurieRelation()
+    {
+        $x = new Hal('/orders');
+        $x->addCurie('acme', 'http://docs.acme.com/relations/{rel}');
     
+        $x->addLink('acme:test', '/widgets');
+
+        $links = $x->getLink('http://docs.acme.com/relations/test');
+        $this->assertEquals('/widgets', $links[0]);
+    }
+
+    public function testGetLinkReturnsFalseOnFailure()
+    {
+        $x = new Hal('/orders');
+        $this->assertFalse($x->getLink('test'));
+    }
+
+    public function testJSONEmptyEmbeddedCollection(){
+        $x = new Hal();
+        $x->addResource('collection');
+
+        $this->assertEquals('{"_embedded":{"collection":[]}}', $x->asJson());
+    }
+
     public function testXMLEmptyEmbeddedCollection(){
-    	$x = new Hal();
+        $x = new Hal();
         $x->addResource('collection');
         $response = <<<EOD
 <?xml version="1.0"?>
@@ -496,5 +528,42 @@ EOD;
 
 EOD;
         $this->assertEquals($response, $x->asXml());
+    }
+
+    public function testLinksWithAttributesUnserialiseCorrectlyJson()
+    {
+        $x = new Hal('/');
+        $x->addCurie('x:test', 'http://test');
+
+        $this->assertEquals($x->asJson(), Hal::fromJson($x->asJson())->asJson());
+    }
+
+    public function testLinksWithAttributesUnserialiseCorrectlyXml()
+    {
+        $x = new Hal('/');
+        $x->addCurie('x:test', 'http://test');
+
+        $this->assertEquals($x->asXml(), Hal::fromXml($x->asXml())->asXml());
+    }
+
+
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testOldStyleAddLinkThrowsError()
+    {
+        $x = new Hal('/');
+        $x->addLink('test', 'http://.../test', 'This should cause an error');
+    }
+    
+    public function testOldStyleAddLinkSetsTitle()
+    {
+        $x = new Hal('/');
+        // Suppress the error (tested above) so phpunit doesn't throw an 
+        // exception and stop the test
+        @$x->addLink('test', 'http://.../test', 'This should cause an error');
+        $link = $x->getLink('test');
+        $attributes = $link[0]->getAttributes();
+        $this->assertEquals('This should cause an error', $attributes['title']);
     }
 }
