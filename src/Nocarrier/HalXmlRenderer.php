@@ -36,12 +36,13 @@ class HalXmlRenderer implements HalRenderer
             $doc->addAttribute('href', $resource->getUri());
         }
 
-        $this->linksForXml($doc, $resource->getLinks());
         $this->arrayToXml($resource->getData(), $doc);
 
         foreach ($resource->getResources() as $rel => $resources) {
             $this->resourcesForXml($doc, $rel, $resources);
         }
+
+        $this->linksForXml($doc, $resource->getLinks());
 
         $dom = dom_import_simplexml($doc);
 
@@ -144,13 +145,13 @@ class HalXmlRenderer implements HalRenderer
                     $element->addAttribute('href', $href);
                 }
 
-                $this->linksForXml($element, $resource->getLinks());
+                $this->arrayToXml($resource->getData(), $element);
 
                 foreach ($resource->getResources() as $innerRel => $innerRes) {
                     $this->resourcesForXml($element, $innerRel, $innerRes);
                 }
 
-                $this->arrayToXml($resource->getData(), $element);
+                $this->linksForXml($element, $resource->getLinks());
             }
         }
     }
