@@ -9,6 +9,7 @@
  *
  * @package Nocarrier
  */
+
 namespace Nocarrier;
 
 /**
@@ -30,6 +31,7 @@ class HalJsonRenderer implements HalRenderer
     public function render(Hal $resource, $pretty)
     {
         $options = 0;
+
         if (version_compare(PHP_VERSION, '5.4.0') >= 0 and $pretty) {
             $options = JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT;
         }
@@ -52,19 +54,23 @@ class HalJsonRenderer implements HalRenderer
             $data['self'] = array('href' => $uri);
         }
 
-        foreach($links as $rel => $links) {
+        foreach ($links as $rel => $links) {
             if (count($links) === 1 && $rel !== 'curies') {
                 $data[$rel] = array('href' => $links[0]->getUri());
+
                 foreach ($links[0]->getAttributes() as $attribute => $value) {
                     $data[$rel][$attribute] = $value;
                 }
             } else {
                 $data[$rel] = array();
+
                 foreach ($links as $link) {
                     $item = array('href' => $link->getUri());
+
                     foreach ($link->getAttributes() as $attribute => $value) {
                         $item[$attribute] = $value;
                     }
+
                     $data[$rel][] = $item;
                 }
             }
@@ -86,7 +92,7 @@ class HalJsonRenderer implements HalRenderer
         foreach ($resources as $resource) {
             $res = $this->arrayForJson($resource);
 
-            if(!empty($res)){
+            if (!empty($res)) {
                 $data[] = $res;
             }
         }
@@ -105,11 +111,11 @@ class HalJsonRenderer implements HalRenderer
     {
         foreach ($data as $key => $value) {
             if (substr($key, 0, 5) == '@xml:') {
-                unset ($data[$key]);
+                unset($data[$key]);
                 $key = substr($key, 5);
                 $data[$key] = $value;
             } elseif (substr($key, 0, 1) == '@') {
-                unset ($data[$key]);
+                unset($data[$key]);
                 $key = substr($key, 1);
                 $data[$key] = $value;
             }
@@ -136,7 +142,7 @@ class HalJsonRenderer implements HalRenderer
     protected function arrayForJson(Hal $resource = null)
     {
 
-        if ($resource == null){
+        if ($resource == null) {
             return array();
         }
 
@@ -149,7 +155,7 @@ class HalJsonRenderer implements HalRenderer
             $data['_links'] = $links;
         }
 
-        foreach($resource->getResources() as $rel => $resources) {
+        foreach ($resource->getResources() as $rel => $resources) {
             $data['_embedded'][$rel] = $this->resourcesForJson($resources);
         }
 
