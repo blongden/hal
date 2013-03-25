@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of the Hal library
  *
@@ -22,7 +21,6 @@ use Nocarrier\Exception\InvalidHalException;
  */
 class HalFactory
 {
-
     /**
      * Convert a JSON representation of a HAL resource into a Hal instance.
      *
