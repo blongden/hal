@@ -141,7 +141,6 @@ class HalJsonRenderer implements HalRenderer
      */
     protected function arrayForJson(Hal $resource = null)
     {
-
         if ($resource == null) {
             return array();
         }
