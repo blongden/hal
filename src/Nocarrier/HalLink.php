@@ -63,17 +63,6 @@ class HalLink
     }
 
     /**
-     * Return the title attribute for this link
-     *
-     * @deprecated
-     * @return string
-     */
-    public function getTitle()
-    {
-        return isset($this->attributes['title']) ? $this->attributes['title'] : null;
-    }
-
-    /**
      * Returns the attributes for this link
      *
      * return array
