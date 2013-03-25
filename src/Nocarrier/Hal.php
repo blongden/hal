@@ -93,13 +93,13 @@ class Hal
     {
         $data = json_decode($text, true);
         $uri = $data['_links']['self']['href'];
-        unset ($data['_links']['self']);
+        unset($data['_links']['self']);
 
         $links = $data['_links'];
-        unset ($data['_links']);
+        unset($data['_links']);
 
         $embedded = isset($data['_embedded']) ? $data['_embedded'] : array();
-        unset ($data['_embedded']);
+        unset($data['_embedded']);
 
         $hal = new Hal($uri, $data);
         foreach ($links as $rel => $links) {
@@ -129,18 +129,18 @@ class Hal
         $data = new \SimpleXMLElement($text);
         $children = $data->children();
         $links = clone $children->link;
-        unset ($children->link);
+        unset($children->link);
 
         $embedded = clone $children->resource;
-        unset ($children->resource);
+        unset($children->resource);
 
-        $hal = new Hal($data->attributes()->href, (array)$children);
+        $hal = new Hal($data->attributes()->href, (array) $children);
         foreach ($links as $links) {
             if (!is_array($links)) {
                 $links = array($links);
             }
-            foreach($links as $link) {
-                $attributes = (array)$link->attributes();
+            foreach ($links as $link) {
+                $attributes = (array) $link->attributes();
                 $attributes = $attributes['@attributes'];
                 $rel = $attributes['rel'];
                 $href = $attributes['href'];
@@ -156,13 +156,13 @@ class Hal
      * Add a link to the resource, identified by $rel, located at $uri, with an
      * optional $title.
      *
-     * The implementation here may look a little strange - this is because the 
+     * The implementation here may look a little strange - this is because the
      * $title parameter has been rolled into $attributes (it's now optional).
      *
      * $title will be removed in the next major release (likely 1.0.0).
      *
-     * This implementation allows for $attributes to be passed as the 3rd 
-     * parameter so your code can be updated immediately to use only $rel, $uri 
+     * This implementation allows for $attributes to be passed as the 3rd
+     * parameter so your code can be updated immediately to use only $rel, $uri
      * and $attributes.
      *
      * @param string $rel
@@ -255,7 +255,7 @@ class Hal
      * @param bool $pretty Enable pretty-printing
      * @return string
      */
-    public function asJson($pretty=false)
+    public function asJson($pretty = false)
     {
         $renderer = new HalJsonRenderer();
         return $renderer->render($this, $pretty);
@@ -267,14 +267,34 @@ class Hal
      * @param bool $pretty Enable pretty-printing
      * @return string
      */
-    public function asXml($pretty=false)
+    public function asXml($pretty = false)
     {
         $renderer = new HalXmlRenderer();
         return $renderer->render($this, $pretty);
     }
 
     /**
-     * Create a CURIE link template, used for abbreviating custom link 
+     * Return the current object as a recursive array
+     * @return array
+     */
+    public function asArray()
+    {
+        $resources = array();
+        foreach ($this->getResources() as $name => $collection) {
+            $resources[$name] = array();
+            foreach ($collection as $item) {
+                $resources[$name][] = $item->asArray();
+            }
+        }
+
+        return array(
+            'data' => $this->getData(),
+            'resources' => $resources,
+        );
+    }
+
+    /**
+     * Create a CURIE link template, used for abbreviating custom link
      * relations.
      *
      * e.g,
