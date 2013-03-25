@@ -156,13 +156,13 @@ class Hal
      * Add a link to the resource, identified by $rel, located at $uri, with an
      * optional $title.
      *
-     * The implementation here may look a little strange - this is because the 
+     * The implementation here may look a little strange - this is because the
      * $title parameter has been rolled into $attributes (it's now optional).
      *
      * $title will be removed in the next major release (likely 1.0.0).
      *
-     * This implementation allows for $attributes to be passed as the 3rd 
-     * parameter so your code can be updated immediately to use only $rel, $uri 
+     * This implementation allows for $attributes to be passed as the 3rd
+     * parameter so your code can be updated immediately to use only $rel, $uri
      * and $attributes.
      *
      * @param string $rel
@@ -273,8 +273,28 @@ class Hal
         return $renderer->render($this, $pretty);
     }
 
+        /**
+     * Return the current object as a recursive array
+     * @return array
+     */
+    public function asArray()
+    {
+        $resources = array();
+        foreach ($this->getResources() as $name => $collection) {
+            $resources[$name] = array();
+            foreach ($collection as $item) {
+                $resources[$name][] = $item->asArray();
+            }
+        }
+
+        return array(
+            'data' => $this->getData(),
+            'resources' => $resources,
+        );
+    }
+
     /**
-     * Create a CURIE link template, used for abbreviating custom link 
+     * Create a CURIE link template, used for abbreviating custom link
      * relations.
      *
      * e.g,
