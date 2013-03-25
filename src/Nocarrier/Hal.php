@@ -175,11 +175,12 @@ class Hal
     public function addLink($rel, $uri, $title = null, array $attributes = array())
     {
         if (!is_array($title) and !is_null($title)) {
-            trigger_error('Using $title as the 3rd argument to addLink is deprecated and will be removed in the next version of Nocarrier\Hal.', E_USER_DEPRECATED);
+            trigger_error('Using $title as the 3rd argument to addLink is deprecated and will be removed in the next version of Nocarrier\Hal. Use array("title" => "my title") instead in $attributes.', E_USER_DEPRECATED);
             $title = array('title' => $title);
         } elseif (is_null($title)) {
             $title = array();
         }
+
         $this->links[$rel][] = new HalLink($uri, array_merge($title, $attributes));
         return $this;
     }
