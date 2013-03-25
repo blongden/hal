@@ -63,7 +63,12 @@ class HalXmlRenderer implements HalRenderer
                 $element = $doc->addChild('link');
                 $element->addAttribute('rel', $rel);
                 $element->addAttribute('href', $link->getUri());
+
                 foreach ($link->getAttributes() as $attribute => $value) {
+                    if (is_bool($value)) {
+                        $value = ($value) ? 'true' : 'false';
+                    }
+
                     $element->addAttribute($attribute, $value);
                 }
             }
@@ -101,7 +106,8 @@ class HalXmlRenderer implements HalRenderer
                     } elseif($key === 'value') {
                         $element->{0} = $value;
                     } elseif(is_bool($value)) {
-                        $element->addChild($key, intval($value));
+                        $value = ($value) ? 'true' : 'false';
+                        $element->addChild($key, $value);
                     } else {
                         $element->addChild($key, htmlspecialchars($value, ENT_QUOTES));
                     }
