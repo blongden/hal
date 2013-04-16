@@ -117,7 +117,7 @@ class Hal
 
         if ($max_depth > 0) {
             foreach ($embedded as $rel => $embed) {
-                $hal->addResource($rel, $this->jsonToHal(json_encode($embed), $max_depth - 1));
+                $hal->addResource($rel, $this->fromJson(json_encode($embed), $max_depth - 1));
             }
         }
 
