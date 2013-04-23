@@ -85,11 +85,12 @@ class Hal
      * Decode a application/hal+json document into a Nocarrier\Hal object
      *
      * @param string $text
+     * @param int $max_depth
      * @static
      * @access public
      * @return Nocarrier\Hal
      */
-    public static function fromJson($text)
+    public static function fromJson($text, $max_depth = 0)
     {
         $data = json_decode($text, true);
         $uri = $data['_links']['self']['href'];
@@ -113,6 +114,13 @@ class Hal
                 $hal->addLink($rel, $href, $link);
             }
         }
+
+        if ($max_depth > 0) {
+            foreach ($embedded as $rel => $embed) {
+                $hal->addResource($rel, $this->fromJson(json_encode($embed), $max_depth - 1));
+            }
+        }
+
         return $hal;
     }
 
