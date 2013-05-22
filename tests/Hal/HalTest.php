@@ -459,6 +459,14 @@ EOD;
         $this->assertEquals('test', (string)$xml->x);
     }
 
+    public function testHalXmlEntitySetWhenValueSpecifiedInMultiData()
+    {
+        $x = new Hal('/', array('x' => array('key' => 'test', 'value' => 'test')));
+
+        $xml = new \SimpleXMLElement($x->asXml());
+        $this->assertEquals('test', (string)$xml->x->key);
+        $this->assertEquals('test', (string)$xml->x->value);
+    }
     public function testBooleanOutput()
     {
         $hal = new Hal('/', array(
