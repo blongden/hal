@@ -46,8 +46,10 @@ class HalJsonRenderer implements HalRenderer
      */
     protected function linksForJson($uri, $links)
     {
-        $data = array('self' => array('href' => $uri));
-
+        $data = array();
+        if (!is_null($uri)) {
+            $data['self'] = array('href' => $uri);
+        }
         foreach($links as $rel => $links) {
             if (count($links) === 1 && $rel !== 'curies') {
                 $data[$rel] = array('href' => $links[0]->getUri());
@@ -125,7 +127,6 @@ class HalJsonRenderer implements HalRenderer
      */
     protected function arrayForJson(Hal $resource = null)
     {
-
         if ($resource == null){
             return array();
         }
@@ -133,8 +134,9 @@ class HalJsonRenderer implements HalRenderer
         $data = $resource->getData();
         $data = $this->stripAttributeMarker($data);
 
-        if ($resource->getUri()) {
-            $data['_links'] = $this->linksForJson($resource->getUri(), $resource->getLinks());
+        $links = $this->linksForJson($resource->getUri(), $resource->getLinks());
+        if (count($links)) {
+            $data['_links'] = $links;
         }
 
         foreach($resource->getResources() as $rel => $resources) {

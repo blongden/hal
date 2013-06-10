@@ -554,4 +554,11 @@ EOD;
         $this->assertEquals($x->asXml(), Hal::fromXml($x->asXml())->asXml());
     }
 
+    public function testResourceWithNullSelfLinkRendersLinksInJson()
+    {
+        $x = new Hal(null);
+        $x->addLink('testrel', 'http://test');
+        $data = json_decode($x->asJson());
+        $this->assertEquals('http://test', $data->_links->testrel->href);
+    }
 }
