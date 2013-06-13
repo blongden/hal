@@ -118,10 +118,14 @@ class HalXmlRenderer implements HalRenderer
      *
      * @param \SimpleXmlElement $doc
      * @param mixed $rel
-     * @param array $resources
+     * @param mixed $resources
      */
-    protected function resourcesForXml(\SimpleXmlElement $doc, $rel, array $resources)
+    protected function resourcesForXml(\SimpleXmlElement $doc, $rel, $resources)
     {
+        if (!is_array($resources)) {
+            $resources = array($resources);
+        }
+
         foreach($resources as $resource) {
 
             $element = $doc->addChild('resource');

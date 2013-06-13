@@ -566,4 +566,30 @@ EOD;
         $attributes = $link[0]->getAttributes();
         $this->assertEquals('This should cause an error', $attributes['title']);
     }
+
+    public function testSetResourceJsonResponse()
+    {
+        $hal = new Hal('http://example.com/');
+        $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $hal->setResource('resource', $res);
+
+        $resource = json_decode($hal->asJson());
+        $this->assertInstanceOf('StdClass', $resource->_embedded);
+        $this->assertInstanceOf('StdClass', $resource->_embedded->resource);
+        $this->assertEquals($resource->_embedded->resource->_links->self->href, '/resource/1');
+        $this->assertEquals($resource->_embedded->resource->field1, 'value1');
+        $this->assertEquals($resource->_embedded->resource->field2, 'value2');
+    }
+
+    public function testSetResourceXmlResponse()
+    {
+        $hal = new Hal('http://example.com/');
+        $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $hal->setResource('resource', $res);
+
+        $result = new \SimpleXmlElement($hal->asXml());
+        $this->assertEquals('/resource/1', $result->resource->attributes()->href);
+        $this->assertEquals('value1', $result->resource->field1);
+        $this->assertEquals('value2', $result->resource->field2);
+    }
 }

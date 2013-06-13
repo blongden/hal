@@ -77,6 +77,10 @@ class HalJsonRenderer implements HalRenderer
      */
     protected function resourcesForJson($resources)
     {
+        if (!is_array($resources)) {
+            return $this->arrayForJson($resources);
+        }
+
         $data = array();
 
         foreach ($resources as $resource) {
