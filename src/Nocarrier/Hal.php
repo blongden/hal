@@ -198,6 +198,14 @@ class Hal
     }
 
     /**
+     * Set resource's data
+     */
+    public function setData(Array $data = null)
+    {
+        $this->data = $data;
+    }
+
+    /**
      * Return an array of data (key => value pairs) representing this resource
      *
      * @return array
@@ -238,6 +246,14 @@ class Hal
     public function getResources()
     {
         return $this->resources;
+    }
+
+    /**
+     * Set resource's URI
+     */
+    public function setUri($uri)
+    {
+        $this->uri = $uri;
     }
 
     /**
