@@ -88,7 +88,7 @@ class Hal
      * @param int $max_depth
      * @static
      * @access public
-     * @return Nocarrier\Hal
+     * @return Hal
      */
     public static function fromJson($text, $max_depth = 0)
     {
@@ -136,7 +136,7 @@ class Hal
      * @param string $text
      * @static
      * @access public
-     * @return Nocarrier\Hal
+     * @return Hal
      */
     public static function fromXml($text)
     {
