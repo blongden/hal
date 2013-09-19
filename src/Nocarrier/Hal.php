@@ -10,7 +10,7 @@
  * @package Nocarrier
  */
 
-namespace Nocarrier;
+namespace \Nocarrier;
 
 /**
  * The Hal document class
@@ -88,7 +88,7 @@ class Hal
      * @param int $max_depth
      * @static
      * @access public
-     * @return Hal
+     * @return \Nocarrier\Hal
      */
     public static function fromJson($text, $max_depth = 0)
     {
@@ -136,7 +136,7 @@ class Hal
      * @param string $text
      * @static
      * @access public
-     * @return Hal
+     * @return \Nocarrier\Hal
      */
     public static function fromXml($text)
     {
@@ -172,7 +172,7 @@ class Hal
      * @param string $rel
      * @param string $uri
      * @param array $attributes Other attributes, as defined by HAL spec and RFC 5988
-     * @return Hal
+     * @return \Nocarrier\Hal
      *
      */
     public function addLink($rel, $uri, array $attributes = array())
@@ -185,9 +185,11 @@ class Hal
      * Add an embedded resource, identified by $rel and represented by $resource.
      *
      * @param string $rel
-     * @param Hal $resource
+     * @param \Nocarrier\Hal $resource
+     *
+     * @return \Nocarrier\Hal
      */
-    public function addResource($rel, Hal $resource = null)
+    public function addResource($rel, \Nocarrier\Hal $resource = null)
     {
         $this->resources[$rel][] = $resource;
         return $this;
@@ -207,7 +209,7 @@ class Hal
      * Return an array of Nocarrier\HalLink objects representing resources
      * related to this one.
      *
-     * @return HalLinkCollection
+     * @return array A collection of \Nocarrier\HalLink
      */
     public function getLinks()
     {
@@ -271,7 +273,7 @@ class Hal
     }
 
     /**
-     * Create a CURIE link template, used for abbreviating custom link 
+     * Create a CURIE link template, used for abbreviating custom link
      * relations.
      *
      * e.g,
@@ -280,7 +282,8 @@ class Hal
      *
      * @param name string
      * @param uri string
-     * @return Hal
+     *
+     * @return \Nocarrier\Hal
      */
     public function addCurie($name, $uri)
     {

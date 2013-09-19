@@ -23,7 +23,7 @@ class HalXmlRenderer implements HalRenderer
     /**
      * render
      *
-     * @param Hal $resource
+     * @param \Nocarrier\Hal $resource
      * @param bool $pretty
      * @return string
      */
@@ -53,7 +53,7 @@ class HalXmlRenderer implements HalRenderer
      * Add links in hal+xml format to a SimpleXmlElement object
      *
      * @param \SimpleXmlElement $doc
-     * @param HalLinkContainer $links
+     * @param \Nocarrier\HalLinkContainer $links
      * @return void
      */
     protected function linksForXml(\SimpleXmlElement $doc, HalLinkContainer $links)

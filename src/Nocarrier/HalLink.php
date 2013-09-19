@@ -41,7 +41,7 @@ class HalLink
     protected $attributes;
 
     /**
-     * The HalLink object. Supported attributes in Hal (specification section 5)
+     * The \Nocarrier\HalLink object. Supported attributes in Hal (specification section 5)
      *
      * @param $uri the uri represented by this link
      * @param $attributes any additional attributes

@@ -22,7 +22,7 @@ interface HalRenderer
     /**
      * Render the Hal resource in the appropriate form. Returns a string representation of the resource.
      *
-     * @param Hal $resource
+     * @param \Nocarrier\Hal $resource
      * @param $pretty
      */
     public function render(Hal $resource, $pretty);

@@ -23,7 +23,7 @@ class HalJsonRenderer implements HalRenderer
     /**
      * render
      *
-     * @param Hal $resource
+     * @param \Nocarrier\Hal $resource
      * @param bool $pretty
      * @return string
      */
@@ -122,7 +122,7 @@ class HalJsonRenderer implements HalRenderer
      * Return an array (compatible with the hal+json format) representing the
      * complete response
      *
-     * @param Hal $resource
+     * @param \Nocarrier\Hal $resource
      * @return array
      */
     protected function arrayForJson(Hal $resource = null)
