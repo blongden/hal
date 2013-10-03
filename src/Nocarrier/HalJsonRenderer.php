@@ -21,7 +21,7 @@ namespace Nocarrier;
 class HalJsonRenderer implements HalRenderer
 {
     /**
-     * render
+     * Render.
      *
      * @param \Nocarrier\Hal $resource
      * @param bool $pretty
@@ -38,7 +38,8 @@ class HalJsonRenderer implements HalRenderer
     }
 
     /**
-     * Return an array (compatible with the hal+json format) representing associated links
+     * Return an array (compatible with the hal+json format) representing
+     * associated links.
      *
      * @param mixed $uri
      * @param array $links
@@ -72,7 +73,8 @@ class HalJsonRenderer implements HalRenderer
     }
 
     /**
-     * Return an array (compatible with the hal+json format) representing associated resources
+     * Return an array (compatible with the hal+json format) representing
+     * associated resources.
      *
      * @param mixed $resources
      * @return array
@@ -93,10 +95,11 @@ class HalJsonRenderer implements HalRenderer
     }
 
     /**
-     * Remove the @ prefix from keys that denotes an attribute in XML. This 
+     * Remove the @ prefix from keys that denotes an attribute in XML. This
      * cannot be represented in JSON, so it's effectively ignored.
      *
-     * @param array $data the array to strip @ from the keys
+     * @param array $data
+     *   The array to strip @ from the keys.
      * @return array
      */
     protected function stripAttributeMarker(array $data)
@@ -120,7 +123,7 @@ class HalJsonRenderer implements HalRenderer
 
     /**
      * Return an array (compatible with the hal+json format) representing the
-     * complete response
+     * complete response.
      *
      * @param \Nocarrier\Hal $resource
      * @return array

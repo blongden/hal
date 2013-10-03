@@ -21,7 +21,7 @@ namespace Nocarrier;
 class HalXmlRenderer implements HalRenderer
 {
     /**
-     * render
+     * Render.
      *
      * @param \Nocarrier\Hal $resource
      * @param bool $pretty
@@ -37,7 +37,7 @@ class HalXmlRenderer implements HalRenderer
 
         $this->arrayToXml($resource->getData(), $doc);
 
-        foreach($resource->getResources() as $rel => $resources) {
+        foreach ($resource->getResources() as $rel => $resources) {
             $this->resourcesForXml($doc, $rel, $resources);
         }
 
@@ -46,11 +46,14 @@ class HalXmlRenderer implements HalRenderer
             $dom->ownerDocument->preserveWhiteSpace = false;
             $dom->ownerDocument->formatOutput = true;
         }
+
         return $dom->ownerDocument->saveXML();
     }
+
     /**
      * linksForXml
-     * Add links in hal+xml format to a SimpleXmlElement object
+     *
+     * Add links in hal+xml format to a SimpleXmlElement object.
      *
      * @param \SimpleXmlElement $doc
      * @param \Nocarrier\HalLinkContainer $links
@@ -58,7 +61,7 @@ class HalXmlRenderer implements HalRenderer
      */
     protected function linksForXml(\SimpleXmlElement $doc, HalLinkContainer $links)
     {
-        foreach($links as $rel => $links) {
+        foreach ($links as $rel => $links) {
             foreach ($links as $link) {
                 $element = $doc->addChild('link');
                 $element->addAttribute('rel', $rel);
@@ -79,7 +82,7 @@ class HalXmlRenderer implements HalRenderer
      * @access protected
      * @return void
      */
-    protected function arrayToXml(array $data, \SimpleXmlElement $element, $parent=null)
+    protected function arrayToXml(array $data, \SimpleXmlElement $element, $parent = null)
     {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
@@ -98,9 +101,9 @@ class HalXmlRenderer implements HalRenderer
                 if (!is_numeric($key)) {
                     if (substr($key, 0, 1) === '@') {
                         $element->addAttribute(substr($key, 1), $value);
-                    } elseif($key === 'value' and count($data) === 1) {
+                    } elseif ($key === 'value' and count($data) === 1) {
                         $element->{0} = $value;
-                    } elseif(is_bool($value)) {
+                    } elseif (is_bool($value)) {
                         $element->addChild($key, intval($value));
                     } else {
                         $element->addChild($key, htmlspecialchars($value, ENT_QUOTES));
@@ -114,7 +117,9 @@ class HalXmlRenderer implements HalRenderer
 
     /**
      * resourcesForXml
-     * Add resources in hal+xml format (identified by $rel) to a SimpleXmlElement object
+     *
+     * Add resources in hal+xml format (identified by $rel) to a
+     * SimpleXmlElement object.
      *
      * @param \SimpleXmlElement $doc
      * @param mixed $rel
@@ -122,7 +127,7 @@ class HalXmlRenderer implements HalRenderer
      */
     protected function resourcesForXml(\SimpleXmlElement $doc, $rel, array $resources)
     {
-        foreach($resources as $resource) {
+        foreach ($resources as $resource) {
 
             $element = $doc->addChild('resource');
             $element->addAttribute('rel', $rel);
@@ -134,7 +139,7 @@ class HalXmlRenderer implements HalRenderer
 
                 $this->linksForXml($element, $resource->getLinks());
 
-                foreach($resource->getResources() as $innerRel => $innerRes) {
+                foreach ($resource->getResources() as $innerRel => $innerRes) {
                     $this->resourcesForXml($element, $innerRel, $innerRes);
                 }
 

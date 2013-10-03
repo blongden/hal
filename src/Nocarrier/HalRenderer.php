@@ -20,7 +20,9 @@ namespace Nocarrier;
 interface HalRenderer
 {
     /**
-     * Render the Hal resource in the appropriate form. Returns a string representation of the resource.
+     * Render the Hal resource in the appropriate form.
+     *
+     * Returns a string representation of the resource.
      *
      * @param \Nocarrier\Hal $resource
      * @param $pretty

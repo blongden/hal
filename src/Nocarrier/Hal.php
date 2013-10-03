@@ -10,7 +10,7 @@
  * @package Nocarrier
  */
 
-namespace \Nocarrier;
+namespace Nocarrier;
 
 /**
  * The Hal document class
@@ -21,13 +21,15 @@ namespace \Nocarrier;
 class Hal
 {
     /**
-     * The uri represented by this representation
+     * The uri represented by this representation.
+     *
      * @var string
      */
     protected $uri;
 
     /**
      * The data for this resource. An associative array of key value pairs.
+     *
      * array(
      *     'price' => 30.00,
      *     'colour' => 'blue'
@@ -39,13 +41,15 @@ class Hal
 
     /**
      * An array of embedded Hal objects representing embedded resources.
+     *
      * @var array
      */
     protected $resources = array();
 
     /**
-     * A collection of Nocarrier\HalLink objects keyed by the link relation to this
-     * resource.
+     * A collection of \Nocarrier\HalLink objects keyed by the link relation to
+     * this resource.
+     *
      * array(
      *     'next' => [HalLink]
      * )
@@ -55,7 +59,7 @@ class Hal
     protected $links = null;
 
     /**
-     * construct a new Hal object from an array of data. You can markup the
+     * Construct a new Hal object from an array of data. You can markup the
      * $data array with certain keys and values in order to affect the
      * generated JSON or XML documents if required to do so.
      *
@@ -82,7 +86,7 @@ class Hal
     }
 
     /**
-     * Decode a application/hal+json document into a Nocarrier\Hal object
+     * Decode a application/hal+json document into a Nocarrier\Hal object.
      *
      * @param string $text
      * @param int $max_depth
@@ -131,7 +135,7 @@ class Hal
     }
 
     /**
-     * Decode a application/hal+xml document into a Nocarrier\Hal object
+     * Decode a application/hal+xml document into a Nocarrier\Hal object.
      *
      * @param string $text
      * @static
@@ -148,13 +152,13 @@ class Hal
         $embedded = clone $children->resource;
         unset ($children->resource);
 
-        $hal = new Hal($data->attributes()->href, (array)$children);
+        $hal = new Hal($data->attributes()->href, (array) $children);
         foreach ($links as $links) {
             if (!is_array($links)) {
                 $links = array($links);
             }
-            foreach($links as $link) {
-                $attributes = (array)$link->attributes();
+            foreach ($links as $link) {
+                $attributes = (array) $link->attributes();
                 $attributes = $attributes['@attributes'];
                 $rel = $attributes['rel'];
                 $href = $attributes['href'];
@@ -167,17 +171,18 @@ class Hal
     }
 
     /**
-     * Add a link to the resource, identified by $rel, located at $uri
+     * Add a link to the resource, identified by $rel, located at $uri.
      *
      * @param string $rel
      * @param string $uri
-     * @param array $attributes Other attributes, as defined by HAL spec and RFC 5988
+     * @param array $attributes
+     *   Other attributes, as defined by HAL spec and RFC 5988.
      * @return \Nocarrier\Hal
-     *
      */
     public function addLink($rel, $uri, array $attributes = array())
     {
         $this->links[$rel][] = new HalLink($uri, $attributes);
+
         return $this;
     }
 
@@ -192,11 +197,12 @@ class Hal
     public function addResource($rel, \Nocarrier\Hal $resource = null)
     {
         $this->resources[$rel][] = $resource;
+
         return $this;
     }
 
     /**
-     * Return an array of data (key => value pairs) representing this resource
+     * Return an array of data (key => value pairs) representing this resource.
      *
      * @return array
      */
@@ -221,7 +227,8 @@ class Hal
      * Will also resolve CURIE rels if required.
      *
      * @param string $rel The link relation required
-     * @return array|false
+     * @return array|bool
+     *   Array of HalLink objects if found. Otherwise false.
      */
     public function getLink($rel)
     {
@@ -239,7 +246,7 @@ class Hal
     }
 
     /**
-     * Get resource's URI
+     * Get resource's URI.
      *
      * @return mixed
      */
@@ -249,26 +256,31 @@ class Hal
     }
 
     /**
-     * Return the current object in a application/hal+json format (links and resources)
+     * Return the current object in a application/hal+json format (links and
+     * resources).
      *
-     * @param bool $pretty Enable pretty-printing
+     * @param bool $pretty
+     *   Enable pretty-printing.
      * @return string
      */
-    public function asJson($pretty=false)
+    public function asJson($pretty = false)
     {
         $renderer = new HalJsonRenderer();
+
         return $renderer->render($this, $pretty);
     }
 
     /**
-     * Return the current object in a application/hal+xml format (links and resources)
+     * Return the current object in a application/hal+xml format (links and
+     * resources).
      *
      * @param bool $pretty Enable pretty-printing
      * @return string
      */
-    public function asXml($pretty=false)
+    public function asXml($pretty = false)
     {
         $renderer = new HalXmlRenderer();
+
         return $renderer->render($this, $pretty);
     }
 
@@ -280,8 +292,8 @@ class Hal
      * $hal->addCurie('acme', 'http://.../rels/{rel}');
      * $hal->addLink('acme:test', 'http://.../test');
      *
-     * @param name string
-     * @param uri string
+     * @param string $name
+     * @param string $uri
      *
      * @return \Nocarrier\Hal
      */

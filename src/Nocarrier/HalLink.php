@@ -20,14 +20,15 @@ namespace Nocarrier;
 class HalLink
 {
     /**
-     * The URI represented by this HalLink
+     * The URI represented by this HalLink.
      *
-     * @value string
+     * @var string
      */
     protected $uri;
 
     /**
-     * Any attributes on this link
+     * Any attributes on this link.
+     *
      * array(
      *  'templated' => 0,
      *  'type' => 'application/hal+json',
@@ -37,14 +38,20 @@ class HalLink
      *  'title' => 'The latest order',
      *  'hreflang' => 'en'
      * )
+     *
+     * @var array
      */
     protected $attributes;
 
     /**
-     * The \Nocarrier\HalLink object. Supported attributes in Hal (specification section 5)
+     * The \Nocarrier\HalLink object.
      *
-     * @param $uri the uri represented by this link
-     * @param $attributes any additional attributes
+     * Supported attributes in Hal (specification section 5).
+     *
+     * @param string $uri
+     *   The URI represented by this link.
+     * @param array $attributes
+     *   Any additional attributes.
      */
     public function __construct($uri, $attributes)
     {
@@ -53,7 +60,7 @@ class HalLink
     }
 
     /**
-     * Return the URI from this link
+     * Return the URI from this link.
      *
      * @return string
      */
@@ -63,7 +70,7 @@ class HalLink
     }
 
     /**
-     * Returns the attributes for this link
+     * Returns the attributes for this link.
      *
      * return array
      */
@@ -73,7 +80,7 @@ class HalLink
     }
 
     /**
-     * The string representation of this link (the URI)
+     * The string representation of this link (the URI).
      *
      * return string
      */
