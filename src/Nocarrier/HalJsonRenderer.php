@@ -21,9 +21,9 @@ namespace Nocarrier;
 class HalJsonRenderer implements HalRenderer
 {
     /**
-     * render
+     * Render.
      *
-     * @param Hal $resource
+     * @param \Nocarrier\Hal $resource
      * @param bool $pretty
      * @return string
      */
@@ -38,7 +38,8 @@ class HalJsonRenderer implements HalRenderer
     }
 
     /**
-     * Return an array (compatible with the hal+json format) representing associated links
+     * Return an array (compatible with the hal+json format) representing
+     * associated links.
      *
      * @param mixed $uri
      * @param array $links
@@ -46,8 +47,10 @@ class HalJsonRenderer implements HalRenderer
      */
     protected function linksForJson($uri, $links)
     {
-        $data = array('self' => array('href' => $uri));
-
+        $data = array();
+        if (!is_null($uri)) {
+            $data['self'] = array('href' => $uri);
+        }
         foreach($links as $rel => $links) {
             if (count($links) === 1 && $rel !== 'curies') {
                 $data[$rel] = array('href' => $links[0]->getUri());
@@ -70,7 +73,8 @@ class HalJsonRenderer implements HalRenderer
     }
 
     /**
-     * Return an array (compatible with the hal+json format) representing associated resources
+     * Return an array (compatible with the hal+json format) representing
+     * associated resources.
      *
      * @param mixed $resources
      * @return array
@@ -91,10 +95,11 @@ class HalJsonRenderer implements HalRenderer
     }
 
     /**
-     * Remove the @ prefix from keys that denotes an attribute in XML. This 
+     * Remove the @ prefix from keys that denotes an attribute in XML. This
      * cannot be represented in JSON, so it's effectively ignored.
      *
-     * @param array $data the array to strip @ from the keys
+     * @param array $data
+     *   The array to strip @ from the keys.
      * @return array
      */
     protected function stripAttributeMarker(array $data)
@@ -118,14 +123,13 @@ class HalJsonRenderer implements HalRenderer
 
     /**
      * Return an array (compatible with the hal+json format) representing the
-     * complete response
+     * complete response.
      *
-     * @param Hal $resource
+     * @param \Nocarrier\Hal $resource
      * @return array
      */
     protected function arrayForJson(Hal $resource = null)
     {
-
         if ($resource == null){
             return array();
         }
@@ -133,8 +137,9 @@ class HalJsonRenderer implements HalRenderer
         $data = $resource->getData();
         $data = $this->stripAttributeMarker($data);
 
-        if ($resource->getUri()) {
-            $data['_links'] = $this->linksForJson($resource->getUri(), $resource->getLinks());
+        $links = $this->linksForJson($resource->getUri(), $resource->getLinks());
+        if (count($links)) {
+            $data['_links'] = $links;
         }
 
         foreach($resource->getResources() as $rel => $resources) {
