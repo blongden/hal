@@ -75,11 +75,18 @@ class Hal
      * representation. This will not affect the JSON representation.
      *
      * @param mixed $uri
-     * @param array $data
+     * @param array|Traversable $data
+     *
+     * @throws \RuntimeException
      */
-    public function __construct($uri = null, array $data = array())
+    public function __construct($uri = null, $data = array())
     {
         $this->uri = $uri;
+
+        if (!is_array($data) && !$data instanceof \Traversable) {
+            throw new \RuntimeException(
+                'The $data parameter must be an array or an object implementing the Traversable interface.');
+        }
         $this->data = $data;
 
         $this->links = new HalLinkContainer();
