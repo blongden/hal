@@ -97,10 +97,10 @@ class Hal
     public static function fromJson($text, $max_depth = 0)
     {
         $data = json_decode($text, true);
-        $uri = $data['_links']['self']['href'];
+        $uri = isset($data['_links']['self']['href']) ? $data['_links']['self']['href'] : "";
         unset ($data['_links']['self']);
 
-        $links = $data['_links'];
+        $links = isset($data['_links']) ? $data['_links'] : array();
         unset ($data['_links']);
 
         $embedded = isset($data['_embedded']) ? $data['_embedded'] : array();
