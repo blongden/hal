@@ -100,7 +100,7 @@ class Hal
         $uri = isset($data['_links']['self']['href']) ? $data['_links']['self']['href'] : "";
         unset ($data['_links']['self']);
 
-        $links = isset($data['_links']) ? $data['_links']['self']['href'] : array();
+        $links = isset($data['_links']) ? $data['_links'] : array();
         unset ($data['_links']);
 
         $embedded = isset($data['_embedded']) ? $data['_embedded'] : array();
