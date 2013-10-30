@@ -35,6 +35,9 @@
         <mkdir dir="${basedir}/build/logs"/>
         <mkdir dir="${basedir}/build/pdepend"/>
         <mkdir dir="${basedir}/build/phpdoc"/>
+        <exec executable="composer">
+            <arg value="install" />
+        </exec>
     </target>
 
     <target name="lint">
@@ -54,7 +57,7 @@
     </target>
 
     <target name="phploc" description="Measure project size using PHPLOC">
-        <exec executable="phploc">
+        <exec executable="bin/phploc">
             <arg value="--log-csv" />
             <arg value="${basedir}/build/logs/phploc.csv" />
             <arg path="${basedir}/src" />
@@ -62,7 +65,7 @@
     </target>
 
     <target name="pdepend" description="Calculate software metrics using PHP_Depend">
-        <exec executable="pdepend">
+        <exec executable="bin/pdepend">
             <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
             <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
             <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
@@ -72,7 +75,7 @@
 
     <target name="phpmd"
         description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
-        <exec executable="phpmd">
+        <exec executable="bin/phpmd">
             <arg path="${basedir}/src" />
             <arg value="text" />
             <arg value="codesize,design,unusedcode,naming" />
@@ -80,7 +83,7 @@
     </target>
 
     <target name="phpmd-ci" description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
-        <exec executable="phpmd">
+        <exec executable="bin/phpmd">
             <arg path="${basedir}/src" />
             <arg value="xml" />
             <arg value="codesize,design,unusedcode,naming" />
@@ -91,14 +94,14 @@
 
     <target name="phpcs"
         description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
-        <exec executable="phpcs">
+        <exec executable="bin/phpcs">
             <arg value="--standard=Zend" />
             <arg path="${basedir}/src" />
         </exec>
     </target>
 
     <target name="phpcs-ci" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
-        <exec executable="phpcs" output="/dev/null">
+        <exec executable="bin/phpcs" output="/dev/null">
             <arg value="--report=checkstyle" />
             <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
             <arg value="--standard=Zend" />
@@ -107,7 +110,7 @@
     </target>
 
     <target name="phpcpd" description="Find duplicate code using PHPCPD">
-        <exec executable="phpcpd">
+        <exec executable="bin/phpcpd">
             <arg value="--log-pmd" />
             <arg value="${basedir}/build/logs/pmd-cpd.xml" />
             <arg path="${basedir}/src" />
@@ -115,7 +118,7 @@
     </target>
 
     <target name="phpdoc" description="Generate API documentation using phpDox">
-        <exec executable="phpdoc">
+        <exec executable="bin/phpdoc.php">
             <arg value="-d" />
             <arg value="${basedir}/src" />
             <arg value="-t" />
@@ -124,11 +127,11 @@
     </target>
 
     <target name="phpunit" description="Run unit tests with PHPUnit">
-        <exec executable="phpunit" failonerror="true"/>
+        <exec executable="bin/phpunit" failonerror="true"/>
     </target>
 
     <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
-        <exec executable="phpcb">
+        <exec executable="bin/phpcb">
             <arg value="--log" />
             <arg path="${basedir}/build/logs" />
             <arg value="--source" />

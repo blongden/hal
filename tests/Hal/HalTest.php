@@ -459,6 +459,14 @@ EOD;
         $this->assertEquals('test', (string)$xml->x);
     }
 
+    public function testHalXmlEntitySetWhenValueSpecifiedInMultiData()
+    {
+        $x = new Hal('/', array('x' => array('key' => 'test', 'value' => 'test')));
+
+        $xml = new \SimpleXMLElement($x->asXml());
+        $this->assertEquals('test', (string)$xml->x->key);
+        $this->assertEquals('test', (string)$xml->x->value);
+    }
     public function testBooleanOutput()
     {
         $hal = new Hal('/', array(
@@ -546,24 +554,11 @@ EOD;
         $this->assertEquals($x->asXml(), Hal::fromXml($x->asXml())->asXml());
     }
 
-
-    /**
-     * @expectedException PHPUnit_Framework_Error
-     */
-    public function testOldStyleAddLinkThrowsError()
+    public function testResourceWithNullSelfLinkRendersLinksInJson()
     {
-        $x = new Hal('/');
-        $x->addLink('test', 'http://.../test', 'This should cause an error');
-    }
-    
-    public function testOldStyleAddLinkSetsTitle()
-    {
-        $x = new Hal('/');
-        // Suppress the error (tested above) so phpunit doesn't throw an 
-        // exception and stop the test
-        @$x->addLink('test', 'http://.../test', 'This should cause an error');
-        $link = $x->getLink('test');
-        $attributes = $link[0]->getAttributes();
-        $this->assertEquals('This should cause an error', $attributes['title']);
+        $x = new Hal(null);
+        $x->addLink('testrel', 'http://test');
+        $data = json_decode($x->asJson());
+        $this->assertEquals('http://test', $data->_links->testrel->href);
     }
 }

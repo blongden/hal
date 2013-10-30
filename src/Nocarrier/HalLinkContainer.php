@@ -21,11 +21,13 @@ namespace Nocarrier;
 class HalLinkContainer extends \ArrayObject
 {
     /**
-     * retrieve a link from the container by rel. Also resolve any curie links 
+     * Retrieve a link from the container by rel. Also resolve any curie links
      * if they are set.
      *
-     * @param string $rel The link relation required
-     * @return array|false
+     * @param string $rel
+     *   The link relation required.
+     * @return array|bool
+     *   Link if found. Otherwise false.
      */
     public function get($rel)
     {
