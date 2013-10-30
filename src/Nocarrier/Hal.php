@@ -202,7 +202,22 @@ class Hal
     }
 
     /**
-     * Return an array of data (key => value pairs) representing this resource.
+     * Set an embedded resource, identified by $rel and represented by $resource
+     *
+     * Using this method signifies that $rel will only ever be a single object 
+     * (only really relevant to JSON rendering)
+     *
+     * @param string $rel
+     * @param Hal $resource
+     */
+    public function setResource($rel, Hal $resource)
+    {
+        $this->resources[$rel] = $resource;
+        return $this;
+    }
+
+    /**
+     * Return an array of data (key => value pairs) representing this resource
      *
      * @return array
      */
