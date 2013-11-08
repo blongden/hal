@@ -209,11 +209,24 @@ class Hal
      * (only really relevant to JSON rendering)
      *
      * @param string $rel
-     * @param Hal $resource
+     * @param array|Hal $resource
      */
-    public function setResource($rel, Hal $resource)
+    public function setResource($rel, $resource)
     {
+        if (is_array($resource)) {
+            foreach ($resource as $r) {
+                $this->addResource($rel, $r);
+            }
+
+            return $this;
+        }
+
+        if (!($resource instanceof Hal)) {
+            throw new \InvalidArgumentException('$resource should be of type array or Nocarrier\Hal');
+        }
+
         $this->resources[$rel] = $resource;
+
         return $this;
     }
 

@@ -562,6 +562,27 @@ EOD;
         $this->assertEquals('http://test', $data->_links->testrel->href);
     }
 
+    public function testSetResourceWithArrayOfResources()
+    {
+        $hal = new Hal('http://example.com/');
+        $res1 = new Hal('/resource/1', array('field1' => '1'));
+        $res2 = new Hal('/resource/2', array('field1' => '2'));
+        $hal->setResource('resource', array($res1, $res2));
+
+        $resource = json_decode($hal->asJson());
+        $this->assertInstanceOf('StdClass', $resource->_embedded);
+        $this->assertInternalType('array', $resource->_embedded->resource);
+        $this->assertEquals($resource->_embedded->resource[0]->field1, '1');
+        $this->assertEquals($resource->_embedded->resource[1]->field1, '2');
+    }
+
+    public function testSetResourceThrowsIfNotPassedAHalOrArray()
+    {
+        $this->setExpectedException('\InvalidArgumentException', '$resource should be of type array or Nocarrier\Hal');    
+        $hal = new Hal('http://example.com/');
+        $hal->setResource('resource', new \stdClass());
+    }
+
     public function testSetResourceJsonResponse()
     {
         $hal = new Hal('http://example.com/');
