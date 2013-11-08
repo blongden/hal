@@ -121,8 +121,9 @@ class Hal
 
         if ($max_depth > 0) {
             foreach ($embedded as $rel => $embed) {
-                if (!is_array($embed)) {
-                    $hal->addResource($rel, self::fromJson(json_encode($embed), $max_depth - 1));
+                $isIndexed = array_values($embed) === $embed;
+                if (!$isIndexed) {
+                    $hal->setResource($rel, self::fromJson(json_encode($embed), $max_depth - 1));
                 } else {
                     foreach ($embed as $child_resource) {
                         $hal->addResource($rel, self::fromJson(json_encode($child_resource), $max_depth - 1));

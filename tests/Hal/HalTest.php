@@ -587,4 +587,59 @@ EOD;
         $this->assertEquals('value1', $result->resource->field1);
         $this->assertEquals('value2', $result->resource->field2);
     }
+
+    public function testHalJsonDecodeWithCollectionOfEmbeddedItems()
+    {
+        $sample = <<<JSON
+        {
+            "_links":{
+                "self":{"href":"http:\/\/example.com\/"}
+            },
+            "_embedded":{
+                "item":[
+                    {
+                        "_links":{
+                            "self":{"href":"http:\/\/example.com\/"}
+                        },
+                        "key": "value1"
+                    },
+                    {
+                        "_links":{
+                            "self":{"href":"http:\/\/example.com\/"}
+                        },
+                        "key": "value2"
+                    }
+                ]
+            }
+        }
+JSON;
+        $resources = Hal::fromJson($sample, 1)->getResources();
+        $data = $resources['item'][0]->getData();
+        $this->assertEquals('value1', $data['key']);
+        $data = $resources['item'][1]->getData();
+        $this->assertEquals('value2', $data['key']);
+    }
+
+    public function testHalJsonDecodeWithSingleEmbeddedItem()
+    {
+        $sample = <<<JSON
+        {
+            "_links":{
+                "self":{"href":"http:\/\/example.com\/"}
+            },
+            "_embedded":{
+                "item": {
+                    "_links":{
+                        "self":{"href":"http:\/\/example.com\/"}
+                    },
+                    "key": "value"
+                }
+            }
+        }
+JSON;
+        $resources = Hal::fromJson($sample, 1)->getResources();
+        $this->assertInstanceOf('Nocarrier\Hal', $resources['item']);
+        $data = $resources['item']->getData();
+        $this->assertEquals('value', $data['key']);
+    }
 }
