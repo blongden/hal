@@ -106,7 +106,7 @@ class Hal
         $embedded = isset($data['_embedded']) ? $data['_embedded'] : array();
         unset ($data['_embedded']);
 
-        $hal = new Hal($uri, $data);
+        $hal = new static($uri, $data);
         foreach ($links as $rel => $links) {
             if (!isset($links[0]) or !is_array($links[0])) {
                 $links = array($links);
@@ -152,7 +152,7 @@ class Hal
         $embedded = clone $children->resource;
         unset ($children->resource);
 
-        $hal = new Hal($data->attributes()->href, (array) $children);
+        $hal = new static($data->attributes()->href, (array) $children);
         foreach ($links as $links) {
             if (!is_array($links)) {
                 $links = array($links);
