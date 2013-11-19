@@ -561,4 +561,17 @@ EOD;
         $data = json_decode($x->asJson());
         $this->assertEquals('http://test', $data->_links->testrel->href);
     }
+
+    public function testDataCanBeTraversable()
+    {
+        $it = new \ArrayIterator(array('traversable' => new \ArrayIterator(array('key' => 'value'))));
+        $x = new Hal('', $it);
+
+        $response = <<<EOD
+<?xml version="1.0"?>
+<resource href=""><traversable><key>value</key></traversable></resource>
+
+EOD;
+        $this->assertEquals($response, $x->asXml());
+    }
 }
