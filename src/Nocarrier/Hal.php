@@ -158,7 +158,7 @@ class Hal
         $embedded = clone $children->resource;
         unset ($children->resource);
 
-        $hal = new static($data->attributes()->href, (array) $children);
+        $hal = new static((string)$data->attributes()->href, (array) $children);
         foreach ($links as $links) {
             if (!is_array($links)) {
                 $links = array($links);
