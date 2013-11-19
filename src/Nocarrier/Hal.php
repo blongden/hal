@@ -97,16 +97,16 @@ class Hal
     public static function fromJson($text, $max_depth = 0)
     {
         $data = json_decode($text, true);
-        $uri = $data['_links']['self']['href'];
+        $uri = isset($data['_links']['self']['href']) ? $data['_links']['self']['href'] : "";
         unset ($data['_links']['self']);
 
-        $links = $data['_links'];
+        $links = isset($data['_links']) ? $data['_links'] : array();
         unset ($data['_links']);
 
         $embedded = isset($data['_embedded']) ? $data['_embedded'] : array();
         unset ($data['_embedded']);
 
-        $hal = new Hal($uri, $data);
+        $hal = new static($uri, $data);
         foreach ($links as $rel => $links) {
             if (!isset($links[0]) or !is_array($links[0])) {
                 $links = array($links);
@@ -138,13 +138,19 @@ class Hal
      * Decode a application/hal+xml document into a Nocarrier\Hal object.
      *
      * @param string $text
+     * @param int $max_depth
+     *
      * @static
      * @access public
      * @return \Nocarrier\Hal
      */
-    public static function fromXml($text)
+    public static function fromXml($text, $max_depth = 0)
     {
-        $data = new \SimpleXMLElement($text);
+        if (!$text instanceof \SimpleXMLElement) {
+            $data = new \SimpleXMLElement($text);
+        } else {
+            $data = $text;
+        }
         $children = $data->children();
         $links = clone $children->link;
         unset ($children->link);
@@ -152,18 +158,29 @@ class Hal
         $embedded = clone $children->resource;
         unset ($children->resource);
 
-        $hal = new Hal($data->attributes()->href, (array) $children);
+        $hal = new static((string)$data->attributes()->href, (array) $children);
         foreach ($links as $links) {
             if (!is_array($links)) {
                 $links = array($links);
             }
             foreach ($links as $link) {
-                $attributes = (array) $link->attributes();
+                $attributes = (array)$link->attributes();
                 $attributes = $attributes['@attributes'];
                 $rel = $attributes['rel'];
                 $href = $attributes['href'];
                 unset($attributes['rel'], $attributes['href']);
                 $hal->addLink($rel, $href, $attributes);
+            }
+        }
+
+        if ($max_depth > 0) {
+            foreach ($embedded as $embed) {
+                $attributes = (array)$embed->attributes();
+                $attributes = $attributes['@attributes'];
+                $rel        = $attributes['rel'];
+                unset($attributes['rel'], $attributes['href']);
+
+                $hal->addResource($rel, self::fromXml($embed, $max_depth - 1));
             }
         }
 
