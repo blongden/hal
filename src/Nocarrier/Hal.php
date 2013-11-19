@@ -271,7 +271,40 @@ class Hal
      */
     public function getResources()
     {
+        $resources = array_map(function ($resource) {
+            return is_array($resource) ? $resource : array($resource);
+        }, $this->getRawResources());
+
+        return $resources;
+    }
+
+    /**
+     * Return an array of Nocarrier\Hal objected embedded in this one. Each key 
+     * may contain an array of resources, or a single resource. For a 
+     * consistent approach, use getResources
+     *
+     * @return array
+     */
+    public function getRawResources()
+    {
         return $this->resources;
+    }
+
+    /**
+     * Get the first resource for a given rel. Useful if you're only expecting 
+     * one resource, or you don't care about subsequent resources
+     *
+     * @return Hal
+     */
+    public function getFirstResource($rel)
+    {
+        $resources = $this->getResources();
+
+        if (isset($resources[$rel])) {
+            return $resources[$rel][0];
+        }
+
+        return null;
     }
 
     /**

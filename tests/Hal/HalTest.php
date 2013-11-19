@@ -659,8 +659,28 @@ JSON;
         }
 JSON;
         $resources = Hal::fromJson($sample, 1)->getResources();
-        $this->assertInstanceOf('Nocarrier\Hal', $resources['item']);
-        $data = $resources['item']->getData();
+        $this->assertInstanceOf('Nocarrier\Hal', $resources['item'][0]);
+        $data = $resources['item'][0]->getData();
         $this->assertEquals('value', $data['key']);
+    }
+
+    public function testGetFirstResourceReturnsSingleItem()
+    {
+        $hal = new Hal('http://example.com/');
+        $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $hal->setResource('resource', $res);
+
+        $this->assertEquals($res, $hal->getFirstResource("resource"));
+    }
+
+    public function testGetFirstResourceReturnsFirstOfMultipleItems()
+    {
+        $hal = new Hal('http://example.com/');
+        $res1 = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $res2 = new Hal('/resource/2', array('field2' => 'value2', 'field2' => 'value2'));
+        $hal->addResource('resource', $res1);
+        $hal->addResource('resource', $res2);
+
+        $this->assertEquals($res1, $hal->getFirstResource("resource"));
     }
 }
