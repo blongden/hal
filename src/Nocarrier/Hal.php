@@ -138,13 +138,19 @@ class Hal
      * Decode a application/hal+xml document into a Nocarrier\Hal object.
      *
      * @param string $text
+     * @param int $max_depth
+     *
      * @static
      * @access public
      * @return \Nocarrier\Hal
      */
-    public static function fromXml($text)
+    public static function fromXml($text, $max_depth = 0)
     {
-        $data = new \SimpleXMLElement($text);
+        if (!$text instanceof \SimpleXMLElement) {
+            $data = new \SimpleXMLElement($text);
+        } else {
+            $data = $text;
+        }
         $children = $data->children();
         $links = clone $children->link;
         unset ($children->link);
@@ -158,12 +164,23 @@ class Hal
                 $links = array($links);
             }
             foreach ($links as $link) {
-                $attributes = (array) $link->attributes();
+                $attributes = (array)$link->attributes();
                 $attributes = $attributes['@attributes'];
                 $rel = $attributes['rel'];
                 $href = $attributes['href'];
                 unset($attributes['rel'], $attributes['href']);
                 $hal->addLink($rel, $href, $attributes);
+            }
+        }
+
+        if ($max_depth > 0) {
+            foreach ($embedded as $embed) {
+                $attributes = (array)$embed->attributes();
+                $attributes = $attributes['@attributes'];
+                $rel        = $attributes['rel'];
+                unset($attributes['rel'], $attributes['href']);
+
+                $hal->addResource($rel, self::fromXml($embed, $max_depth - 1));
             }
         }
 
