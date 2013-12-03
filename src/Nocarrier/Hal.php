@@ -309,7 +309,7 @@ class Hal
     {
         $renderer = new HalJsonRenderer();
 
-        return $renderer->render($this, $pretty);
+        return $renderer->render($this, $pretty, $encode);
     }
 
     /**
