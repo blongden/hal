@@ -574,4 +574,11 @@ EOD;
 EOD;
         $this->assertEquals($response, $x->asXml());
     }
+
+    public function testJsonAllowingDisableEncode()
+    {
+        $hal = new Hal();
+        $this->assertSame(array(), $hal->asJson(false, false));
+    }
+
 }
