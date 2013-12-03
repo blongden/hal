@@ -27,14 +27,19 @@ class HalJsonRenderer implements HalRenderer
      * @param bool $pretty
      * @return string
      */
-    public function render(Hal $resource, $pretty)
+    public function render(Hal $resource, $pretty, $encode = true)
     {
         $options = 0;
         if (version_compare(PHP_VERSION, '5.4.0') >= 0 and $pretty) {
             $options = JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT;
         }
 
-        return json_encode($this->arrayForJson($resource), $options);
+        $arrayForJson = $this->arrayForJson($resource);
+        if ($encode) {
+            return json_encode($arrayForJson, $options);
+        }
+
+        return $arrayForJson;
     }
 
     /**

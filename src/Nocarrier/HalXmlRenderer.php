@@ -27,7 +27,7 @@ class HalXmlRenderer implements HalRenderer
      * @param bool $pretty
      * @return string
      */
-    public function render(Hal $resource, $pretty)
+    public function render(Hal $resource, $pretty, $encode = true)
     {
         $doc = new \SimpleXMLElement('<resource></resource>');
         if (!is_null($resource->getUri())) {

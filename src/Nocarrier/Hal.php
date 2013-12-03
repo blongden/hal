@@ -301,9 +301,11 @@ class Hal
      *
      * @param bool $pretty
      *   Enable pretty-printing.
+     * @param bool $encode
+     *   Run through json_encode
      * @return string
      */
-    public function asJson($pretty = false)
+    public function asJson($pretty = false, $encode = true)
     {
         $renderer = new HalJsonRenderer();
 
