@@ -27,5 +27,5 @@ interface HalRenderer
      * @param \Nocarrier\Hal $resource
      * @param $pretty
      */
-    public function render(Hal $resource, $pretty);
+    public function render(Hal $resource, $pretty, $encode);
 }

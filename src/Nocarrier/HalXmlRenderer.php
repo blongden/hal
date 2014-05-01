@@ -27,7 +27,7 @@ class HalXmlRenderer implements HalRenderer
      * @param bool $pretty
      * @return string
      */
-    public function render(Hal $resource, $pretty)
+    public function render(Hal $resource, $pretty, $encode = true)
     {
         $doc = new \SimpleXMLElement('<resource></resource>');
         if (!is_null($resource->getUri())) {
@@ -82,10 +82,10 @@ class HalXmlRenderer implements HalRenderer
      * @access protected
      * @return void
      */
-    protected function arrayToXml(array $data, \SimpleXmlElement $element, $parent = null)
+    protected function arrayToXml($data, \SimpleXmlElement $element, $parent = null)
     {
         foreach ($data as $key => $value) {
-            if (is_array($value)) {
+            if (is_array($value) || $value instanceof \Traversable) {
                 if (!is_numeric($key)) {
                     if (count($value) > 0 && isset($value[0])) {
                         $this->arrayToXml($value, $element, $key);
