@@ -25,7 +25,8 @@ interface HalRenderer
      * Returns a string representation of the resource.
      *
      * @param \Nocarrier\Hal $resource
-     * @param $pretty
+     * @param boolean $pretty
+     * @param boolean $encode
      */
     public function render(Hal $resource, $pretty, $encode);
 }
