@@ -195,7 +195,7 @@ class Hal
         $href = $attributes['href'];
         unset($attributes['rel'], $attributes['href']);
 
-        return [$rel, $href, $attributes];
+        return array($rel, $href, $attributes);
     }
 
     /**
