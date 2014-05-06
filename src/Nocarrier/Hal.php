@@ -121,8 +121,9 @@ class Hal
 
         if ($max_depth > 0) {
             foreach ($embedded as $rel => $embed) {
-                if (!is_array($embed)) {
-                    $hal->addResource($rel, self::fromJson(json_encode($embed), $max_depth - 1));
+                $isIndexed = array_values($embed) === $embed;
+                if (!$isIndexed) {
+                    $hal->setResource($rel, self::fromJson(json_encode($embed), $max_depth - 1));
                 } else {
                     foreach ($embed as $child_resource) {
                         $hal->addResource($rel, self::fromJson(json_encode($child_resource), $max_depth - 1));
@@ -218,6 +219,34 @@ class Hal
         return $this;
     }
 
+	/**
+     * Set an embedded resource, identified by $rel and represented by $resource
+     *
+     * Using this method signifies that $rel will only ever be a single object 
+     * (only really relevant to JSON rendering)
+     *
+     * @param string $rel
+     * @param array|Hal $resource
+     */
+    public function setResource($rel, $resource)
+    {
+        if (is_array($resource)) {
+            foreach ($resource as $r) {
+                $this->addResource($rel, $r);
+            }
+
+            return $this;
+        }
+
+        if (!($resource instanceof Hal)) {
+            throw new \InvalidArgumentException('$resource should be of type array or Nocarrier\Hal');
+        }
+
+        $this->resources[$rel] = $resource;
+
+        return $this;
+    }
+
     /**
      * Set resource's data
      */
@@ -267,7 +296,40 @@ class Hal
      */
     public function getResources()
     {
+        $resources = array_map(function ($resource) {
+            return is_array($resource) ? $resource : array($resource);
+        }, $this->getRawResources());
+
+        return $resources;
+    }
+
+    /**
+     * Return an array of Nocarrier\Hal objected embedded in this one. Each key 
+     * may contain an array of resources, or a single resource. For a 
+     * consistent approach, use getResources
+     *
+     * @return array
+     */
+    public function getRawResources()
+    {
         return $this->resources;
+    }
+
+    /**
+     * Get the first resource for a given rel. Useful if you're only expecting 
+     * one resource, or you don't care about subsequent resources
+     *
+     * @return Hal
+     */
+    public function getFirstResource($rel)
+    {
+        $resources = $this->getResources();
+
+        if (isset($resources[$rel])) {
+            return $resources[$rel][0];
+        }
+
+        return null;
     }
 
     /**
