@@ -114,6 +114,19 @@ class Hal
         unset ($data['_embedded']);
 
         $hal = new static($uri, $data);
+        self::addJsonLinkData($hal, $links);
+
+        if ($max_depth > 0) {
+            foreach ($embedded as $rel => $embed) {
+                self::setOrAddResource($hal, $rel, $embed, $max_depth);
+            }
+        }
+
+        return $hal;
+    }
+
+    private static function addJsonLinkData($hal, $links)
+    {
         foreach ($links as $rel => $links) {
             if (!isset($links[0]) or !is_array($links[0])) {
                 $links = array($links);
@@ -125,14 +138,6 @@ class Hal
                 $hal->addLink($rel, $href, $link);
             }
         }
-
-        if ($max_depth > 0) {
-            foreach ($embedded as $rel => $embed) {
-                self::setOrAddResource($hal, $rel, $embed, $max_depth);
-            }
-        }
-
-        return $hal;
     }
 
     private static function setOrAddResource($hal, $rel, $embed, $max_depth)
