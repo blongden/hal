@@ -103,6 +103,19 @@ class Hal
      */
     public static function fromJson($text, $max_depth = 0)
     {
+        list($uri, $links, $embedded, $data) = self::prepareJsonData($text);
+        $hal = new static($uri, $data);
+        self::addJsonLinkData($hal, $links);
+
+        if ($max_depth > 0) {
+            self::setEmbeddedResources($hal, $embedded, $max_depth);
+        }
+
+        return $hal;
+    }
+
+    private static function prepareJsonData($text)
+    {
         $data = json_decode($text, true);
         $uri = isset($data['_links']['self']['href']) ? $data['_links']['self']['href'] : "";
         unset ($data['_links']['self']);
@@ -113,14 +126,7 @@ class Hal
         $embedded = isset($data['_embedded']) ? $data['_embedded'] : array();
         unset ($data['_embedded']);
 
-        $hal = new static($uri, $data);
-        self::addJsonLinkData($hal, $links);
-
-        if ($max_depth > 0) {
-            self::setEmbeddedResources($hal, $embedded, $max_depth);
-        }
-
-        return $hal;
+        return array($uri, $links, $embedded, $data);
     }
 
     private static function addJsonLinkData($hal, $links)
