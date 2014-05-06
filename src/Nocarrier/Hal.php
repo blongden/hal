@@ -172,27 +172,30 @@ class Hal
                 $links = array($links);
             }
             foreach ($links as $link) {
-                $attributes = (array)$link->attributes();
-                $attributes = $attributes['@attributes'];
-                $rel = $attributes['rel'];
-                $href = $attributes['href'];
-                unset($attributes['rel'], $attributes['href']);
+                list($rel, $href, $attributes) = self::extractKnownData($link);
                 $hal->addLink($rel, $href, $attributes);
             }
         }
 
         if ($max_depth > 0) {
             foreach ($embedded as $embed) {
-                $attributes = (array)$embed->attributes();
-                $attributes = $attributes['@attributes'];
-                $rel        = $attributes['rel'];
-                unset($attributes['rel'], $attributes['href']);
-
+                list($rel, $href, $attributes) = self::extractKnownData($embed);
                 $hal->addResource($rel, self::fromXml($embed, $max_depth - 1));
             }
         }
 
         return $hal;
+    }
+
+    private static function extractKnownData($data)
+    {
+        $attributes = (array)$data->attributes();
+        $attributes = $attributes['@attributes'];
+        $rel = $attributes['rel'];
+        $href = $attributes['href'];
+        unset($attributes['rel'], $attributes['href']);
+
+        return [$rel, $href, $attributes];
     }
 
     /**
@@ -226,10 +229,10 @@ class Hal
         return $this;
     }
 
-	/**
+    /**
      * Set an embedded resource, identified by $rel and represented by $resource
      *
-     * Using this method signifies that $rel will only ever be a single object 
+     * Using this method signifies that $rel will only ever be a single object
      * (only really relevant to JSON rendering)
      *
      * @param string $rel
@@ -311,8 +314,8 @@ class Hal
     }
 
     /**
-     * Return an array of Nocarrier\Hal objected embedded in this one. Each key 
-     * may contain an array of resources, or a single resource. For a 
+     * Return an array of Nocarrier\Hal objected embedded in this one. Each key
+     * may contain an array of resources, or a single resource. For a
      * consistent approach, use getResources
      *
      * @return array
@@ -323,7 +326,7 @@ class Hal
     }
 
     /**
-     * Get the first resource for a given rel. Useful if you're only expecting 
+     * Get the first resource for a given rel. Useful if you're only expecting
      * one resource, or you don't care about subsequent resources
      *
      * @return Hal
