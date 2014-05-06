@@ -86,6 +86,10 @@ class HalJsonRenderer implements HalRenderer
      */
     protected function resourcesForJson($resources)
     {
+        if (!is_array($resources)) {
+            return $this->arrayForJson($resources);
+        }
+
         $data = array();
 
         foreach ($resources as $resource) {
@@ -147,7 +151,7 @@ class HalJsonRenderer implements HalRenderer
             $data['_links'] = $links;
         }
 
-        foreach($resource->getResources() as $rel => $resources) {
+        foreach($resource->getRawResources() as $rel => $resources) {
             $data['_embedded'][$rel] = $this->resourcesForJson($resources);
         }
 

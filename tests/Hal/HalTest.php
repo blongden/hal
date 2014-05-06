@@ -581,4 +581,125 @@ EOD;
         $this->assertSame(array(), $hal->asJson(false, false));
     }
 
+    public function testSetResourceWithArrayOfResources()
+    {
+        $hal = new Hal('http://example.com/');
+        $res1 = new Hal('/resource/1', array('field1' => '1'));
+        $res2 = new Hal('/resource/2', array('field1' => '2'));
+        $hal->setResource('resource', array($res1, $res2));
+
+        $resource = json_decode($hal->asJson());
+        $this->assertInstanceOf('StdClass', $resource->_embedded);
+        $this->assertInternalType('array', $resource->_embedded->resource);
+        $this->assertEquals($resource->_embedded->resource[0]->field1, '1');
+        $this->assertEquals($resource->_embedded->resource[1]->field1, '2');
+    }
+
+    public function testSetResourceThrowsIfNotPassedAHalOrArray()
+    {
+        $this->setExpectedException('\InvalidArgumentException', '$resource should be of type array or Nocarrier\Hal');    
+        $hal = new Hal('http://example.com/');
+        $hal->setResource('resource', new \stdClass());
+    }
+
+    public function testSetResourceJsonResponse()
+    {
+        $hal = new Hal('http://example.com/');
+        $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $hal->setResource('resource', $res);
+
+        $resource = json_decode($hal->asJson());
+        $this->assertInstanceOf('StdClass', $resource->_embedded);
+        $this->assertInstanceOf('StdClass', $resource->_embedded->resource);
+        $this->assertEquals($resource->_embedded->resource->_links->self->href, '/resource/1');
+        $this->assertEquals($resource->_embedded->resource->field1, 'value1');
+        $this->assertEquals($resource->_embedded->resource->field2, 'value2');
+    }
+
+    public function testSetResourceXmlResponse()
+    {
+        $hal = new Hal('http://example.com/');
+        $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $hal->setResource('resource', $res);
+
+        $result = new \SimpleXmlElement($hal->asXml());
+        $this->assertEquals('/resource/1', $result->resource->attributes()->href);
+        $this->assertEquals('value1', $result->resource->field1);
+        $this->assertEquals('value2', $result->resource->field2);
+    }
+
+    public function testHalJsonDecodeWithCollectionOfEmbeddedItems()
+    {
+        $sample = <<<JSON
+        {
+            "_links":{
+                "self":{"href":"http:\/\/example.com\/"}
+            },
+            "_embedded":{
+                "item":[
+                    {
+                        "_links":{
+                            "self":{"href":"http:\/\/example.com\/"}
+                        },
+                        "key": "value1"
+                    },
+                    {
+                        "_links":{
+                            "self":{"href":"http:\/\/example.com\/"}
+                        },
+                        "key": "value2"
+                    }
+                ]
+            }
+        }
+JSON;
+        $resources = Hal::fromJson($sample, 1)->getResources();
+        $data = $resources['item'][0]->getData();
+        $this->assertEquals('value1', $data['key']);
+        $data = $resources['item'][1]->getData();
+        $this->assertEquals('value2', $data['key']);
+    }
+
+    public function testHalJsonDecodeWithSingleEmbeddedItem()
+    {
+        $sample = <<<JSON
+        {
+            "_links":{
+                "self":{"href":"http:\/\/example.com\/"}
+            },
+            "_embedded":{
+                "item": {
+                    "_links":{
+                        "self":{"href":"http:\/\/example.com\/"}
+                    },
+                    "key": "value"
+                }
+            }
+        }
+JSON;
+        $resources = Hal::fromJson($sample, 1)->getResources();
+        $this->assertInstanceOf('Nocarrier\Hal', $resources['item'][0]);
+        $data = $resources['item'][0]->getData();
+        $this->assertEquals('value', $data['key']);
+    }
+
+    public function testGetFirstResourceReturnsSingleItem()
+    {
+        $hal = new Hal('http://example.com/');
+        $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $hal->setResource('resource', $res);
+
+        $this->assertEquals($res, $hal->getFirstResource("resource"));
+    }
+
+    public function testGetFirstResourceReturnsFirstOfMultipleItems()
+    {
+        $hal = new Hal('http://example.com/');
+        $res1 = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $res2 = new Hal('/resource/2', array('field2' => 'value2', 'field2' => 'value2'));
+        $hal->addResource('resource', $res1);
+        $hal->addResource('resource', $res2);
+
+        $this->assertEquals($res1, $hal->getFirstResource("resource"));
+    }
 }
