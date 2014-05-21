@@ -95,67 +95,15 @@ class Hal
     /**
      * Decode a application/hal+json document into a Nocarrier\Hal object.
      *
-     * @param string $text
+     * @param string $data
      * @param int $max_depth
      * @static
      * @access public
      * @return \Nocarrier\Hal
      */
-    public static function fromJson($text, $max_depth = 0)
+    public static function fromJson($data, $depth = 0)
     {
-        list($uri, $links, $embedded, $data) = self::prepareJsonData($text);
-        $hal = new static($uri, $data);
-        self::addJsonLinkData($hal, $links);
-
-        if ($max_depth > 0) {
-            self::setEmbeddedResources($hal, $embedded, $max_depth);
-        }
-
-        return $hal;
-    }
-
-    private static function prepareJsonData($text)
-    {
-        $data = json_decode($text, true);
-        $uri = isset($data['_links']['self']['href']) ? $data['_links']['self']['href'] : "";
-        unset ($data['_links']['self']);
-
-        $links = isset($data['_links']) ? $data['_links'] : array();
-        unset ($data['_links']);
-
-        $embedded = isset($data['_embedded']) ? $data['_embedded'] : array();
-        unset ($data['_embedded']);
-
-        return array($uri, $links, $embedded, $data);
-    }
-
-    private static function addJsonLinkData($hal, $links)
-    {
-        foreach ($links as $rel => $links) {
-            if (!isset($links[0]) or !is_array($links[0])) {
-                $links = array($links);
-            }
-
-            foreach ($links as $link) {
-                $href = $link['href'];
-                unset($link['href'], $link['title']);
-                $hal->addLink($rel, $href, $link);
-            }
-        }
-    }
-
-    private static function setEmbeddedResources($hal, $embedded, $max_depth)
-    {
-        foreach ($embedded as $rel => $embed) {
-            $isIndexed = array_values($embed) === $embed;
-            if (!$isIndexed) {
-                $hal->setResource($rel, self::fromJson(json_encode($embed), $max_depth - 1));
-            } else {
-                foreach ($embed as $child_resource) {
-                    $hal->addResource($rel, self::fromJson(json_encode($child_resource), $max_depth - 1));
-                }
-            }
-        }
+        return JsonHalFactory::fromJson(new static(), $data, $depth);
     }
 
     /**
@@ -168,50 +116,9 @@ class Hal
      * @access public
      * @return \Nocarrier\Hal
      */
-    public static function fromXml($text, $max_depth = 0)
+    public static function fromXml($data, $depth = 0)
     {
-        if (!$text instanceof \SimpleXMLElement) {
-            $data = new \SimpleXMLElement($text);
-        } else {
-            $data = $text;
-        }
-        $children = $data->children();
-        $links = clone $children->link;
-        unset ($children->link);
-
-        $embedded = clone $children->resource;
-        unset ($children->resource);
-
-        $hal = new static((string)$data->attributes()->href, (array) $children);
-        foreach ($links as $links) {
-            if (!is_array($links)) {
-                $links = array($links);
-            }
-            foreach ($links as $link) {
-                list($rel, $href, $attributes) = self::extractKnownData($link);
-                $hal->addLink($rel, $href, $attributes);
-            }
-        }
-
-        if ($max_depth > 0) {
-            foreach ($embedded as $embed) {
-                list($rel, $href, $attributes) = self::extractKnownData($embed);
-                $hal->addResource($rel, self::fromXml($embed, $max_depth - 1));
-            }
-        }
-
-        return $hal;
-    }
-
-    private static function extractKnownData($data)
-    {
-        $attributes = (array)$data->attributes();
-        $attributes = $attributes['@attributes'];
-        $rel = $attributes['rel'];
-        $href = $attributes['href'];
-        unset($attributes['rel'], $attributes['href']);
-
-        return array($rel, $href, $attributes);
+        return XmlHalFactory::fromXml(new static(), $data, $depth);
     }
 
     /**
@@ -279,6 +186,7 @@ class Hal
     public function setData(Array $data = null)
     {
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -364,6 +272,7 @@ class Hal
     public function setUri($uri)
     {
         $this->uri = $uri;
+        return $this;
     }
 
     /**
