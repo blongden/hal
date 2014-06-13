@@ -702,4 +702,13 @@ JSON;
 
         $this->assertEquals($res1, $hal->getFirstResource("resource"));
     }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testHalFromJsonThrowsExceptionOnInvalidJSON()
+    {
+        $invalidJson = 'foo';
+        Hal::fromJson($invalidJson);
+    }
 }
