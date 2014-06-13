@@ -96,7 +96,7 @@ class Hal
      * Decode a application/hal+json document into a Nocarrier\Hal object.
      *
      * @param string $data
-     * @param int $max_depth
+     * @param int $depth
      * @static
      * @access public
      * @return \Nocarrier\Hal
@@ -109,8 +109,7 @@ class Hal
     /**
      * Decode a application/hal+xml document into a Nocarrier\Hal object.
      *
-     * @param string $text
-     * @param int $max_depth
+     * @param int $depth
      *
      * @static
      * @access public
@@ -159,7 +158,7 @@ class Hal
      * (only really relevant to JSON rendering)
      *
      * @param string $rel
-     * @param array|Hal $resource
+     * @param Hal $resource
      */
     public function setResource($rel, $resource)
     {

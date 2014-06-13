@@ -7,8 +7,7 @@ class XmlHalFactory
     /**
      * Decode a application/hal+xml document into a Nocarrier\Hal object.
      *
-     * @param string $text
-     * @param int $max_depth
+     * @param int $depth
      *
      * @static
      * @access public

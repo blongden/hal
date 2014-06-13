@@ -8,7 +8,7 @@ class JsonHalFactory
      * Decode a application/hal+json document into a Nocarrier\Hal object.
      *
      * @param string $text
-     * @param int $max_depth
+     * @param int $depth
      * @static
      * @access public
      * @return \Nocarrier\Hal
@@ -26,6 +26,9 @@ class JsonHalFactory
         return $hal;
     }
 
+    /**
+     * @param string $text
+     */
     private static function prepareJsonData($text)
     {
         $data = json_decode($text, true);
@@ -44,6 +47,9 @@ class JsonHalFactory
         return array($uri, $links, $embedded, $data);
     }
 
+    /**
+     * @param Hal $hal
+     */
     private static function addJsonLinkData($hal, $links)
     {
         foreach ($links as $rel => $links) {
@@ -59,6 +65,9 @@ class JsonHalFactory
         }
     }
 
+    /**
+     * @param integer $depth
+     */
     private static function setEmbeddedResources(Hal $hal, $embedded, $depth)
     {
         foreach ($embedded as $rel => $embed) {
