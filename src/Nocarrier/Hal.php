@@ -97,6 +97,9 @@ class Hal
     public static function fromJson($text, $max_depth = 0)
     {
         $data = json_decode($text, true);
+        if (is_null($data)) {
+            throw new \RuntimeException('Data passed is not valid JSON');
+        }
         $uri = $data['_links']['self']['href'];
         unset ($data['_links']['self']);
 
