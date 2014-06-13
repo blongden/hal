@@ -29,6 +29,9 @@ class JsonHalFactory
     private static function prepareJsonData($text)
     {
         $data = json_decode($text, true);
+        if (json_last_error() != JSON_ERROR_NONE) {
+            throw new \RuntimeException('The $text parameter must be valid JSON');
+        }
         $uri = isset($data['_links']['self']['href']) ? $data['_links']['self']['href'] : "";
         unset ($data['_links']['self']);
 
