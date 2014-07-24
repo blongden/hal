@@ -59,6 +59,13 @@ class Hal
     protected $links = null;
 
     /**
+     * A list of rel types for links that will force a rel type to array for one element
+     *
+     * @var array 
+     */
+    protected $arrayLinkRels = array();
+
+    /**
      * Construct a new Hal object from an array of data. You can markup the
      * $data array with certain keys and values in order to affect the
      * generated JSON or XML documents if required to do so.
@@ -127,11 +134,16 @@ class Hal
      * @param string $uri
      * @param array $attributes
      *   Other attributes, as defined by HAL spec and RFC 5988.
+     * @param bool $forceArray whether to force a rel to be an array if it has only one entry
      * @return \Nocarrier\Hal
      */
-    public function addLink($rel, $uri, array $attributes = array())
+    public function addLink($rel, $uri, array $attributes = array(), $forceArray = false)
     {
         $this->links[$rel][] = new HalLink($uri, $attributes);
+
+        if ($forceArray) {
+            $this->arrayLinkRels[] = $rel;
+        }
 
         return $this;
     }
@@ -147,7 +159,7 @@ class Hal
     public function addResource($rel, \Nocarrier\Hal $resource = null)
     {
         $this->resources[$rel][] = $resource;
-
+        
         return $this;
     }
 
@@ -331,5 +343,13 @@ class Hal
     public function addCurie($name, $uri)
     {
         return $this->addLink('curies', $uri, array('name' => $name, 'templated' => true));
+    }
+
+    /**
+     * Get a list of rel types for links that will be forced to an array for one element
+     */
+    public function getArrayLinkRels()
+    {
+        return $this->arrayLinkRels;
     }
 }
