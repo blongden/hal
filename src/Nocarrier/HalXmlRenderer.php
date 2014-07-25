@@ -102,7 +102,7 @@ class HalXmlRenderer implements HalRenderer
                     if (substr($key, 0, 1) === '@') {
                         $element->addAttribute(substr($key, 1), $value);
                     } elseif ($key === 'value' and count($data) === 1) {
-                        $element->{0} = $value;
+                        $element[0] = $value;
                     } elseif (is_bool($value)) {
                         $element->addChild($key, intval($value));
                     } else {
