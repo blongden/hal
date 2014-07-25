@@ -50,14 +50,14 @@ class HalJsonRenderer implements HalRenderer
      * @param array $links
      * @return array
      */
-    protected function linksForJson($uri, $links)
+    protected function linksForJson($uri, $links, $arrayLinkRels)
     {
         $data = array();
         if (!is_null($uri)) {
             $data['self'] = array('href' => $uri);
         }
         foreach ($links as $rel => $links) {
-            if (count($links) === 1 && $rel !== 'curies') {
+            if (count($links) === 1 && $rel !== 'curies' && !in_array($rel, $arrayLinkRels)) {
                 $data[$rel] = array('href' => $links[0]->getUri());
                 foreach ($links[0]->getAttributes() as $attribute => $value) {
                     $data[$rel][$attribute] = $value;
@@ -146,7 +146,7 @@ class HalJsonRenderer implements HalRenderer
         $data = $resource->getData();
         $data = $this->stripAttributeMarker($data);
 
-        $links = $this->linksForJson($resource->getUri(), $resource->getLinks());
+        $links = $this->linksForJson($resource->getUri(), $resource->getLinks(), $resource->getArrayLinkRels());
         if (count($links)) {
             $data['_links'] = $links;
         }

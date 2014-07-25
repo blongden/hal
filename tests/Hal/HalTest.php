@@ -59,6 +59,16 @@ class HalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('/test/1', $result->_links->test->href);
     }
 
+    public function testAddLinkRelAsArrayJsonResponse()
+    {
+        $hal = new Hal('http://example.com/');
+        $hal->addLink('test', '/test/1', array(), true);
+        $json =  $hal->asJson();
+        $expectedJson = '{"_links":{"self":{"href":"http:\/\/example.com\/"},"test":[{"href":"\/test\/1"}]}}';
+        $this->assertEquals($json,$expectedJson);
+    }
+
+
     public function testAddLinkXmlResponse()
     {
         $hal = new Hal('http://example.com/');
