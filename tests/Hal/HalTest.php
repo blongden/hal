@@ -109,6 +109,22 @@ EOD;
         $this->assertEquals($resource->_embedded->resource[0]->field2, 'value2');
     }
 
+    public function testResourceJsonResponseForceAsNoArray()
+    {
+        $hal = new Hal('http://example.com/');
+        $res = new Hal('/resource/1', array('field1' => 'value1', 'field2' => 'value2'));
+        $hal->addResource('resource', $res, false);
+
+        $resource = json_decode($hal->asJson());
+        $this->assertInstanceOf('StdClass', $resource->_embedded);
+        $this->assertInstanceOf('StdClass', $resource->_embedded->resource);
+        $this->assertEquals($resource->_embedded->resource->_links->self->href, '/resource/1');
+        $this->assertEquals($resource->_embedded->resource->field1, 'value1');
+        $this->assertEquals($resource->_embedded->resource->field2, 'value2');
+    }
+
+
+
     public function testResourceXmlResponse()
     {
         $hal = new Hal('http://example.com/');
