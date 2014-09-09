@@ -102,7 +102,7 @@ class HalXmlRenderer implements HalRenderer
                     if (substr($key, 0, 1) === '@') {
                         $element->addAttribute(substr($key, 1), $value);
                     } elseif ($key === 'value' and count($data) === 1) {
-                        $element->{0} = $value;
+                        $element[0] = $value;
                     } elseif (is_bool($value)) {
                         $element->addChild($key, intval($value));
                     } else {
@@ -123,11 +123,15 @@ class HalXmlRenderer implements HalRenderer
      *
      * @param \SimpleXmlElement $doc
      * @param mixed $rel
-     * @param array $resources
+     * @param mixed $resources
      */
-    protected function resourcesForXml(\SimpleXmlElement $doc, $rel, array $resources)
+    protected function resourcesForXml(\SimpleXmlElement $doc, $rel, $resources)
     {
-        foreach ($resources as $resource) {
+        if (!is_array($resources)) {
+            $resources = array($resources);
+        }
+
+        foreach($resources as $resource) {
 
             $element = $doc->addChild('resource');
             $element->addAttribute('rel', $rel);

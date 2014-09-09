@@ -50,14 +50,14 @@ class HalJsonRenderer implements HalRenderer
      * @param array $links
      * @return array
      */
-    protected function linksForJson($uri, $links)
+    protected function linksForJson($uri, $links, $arrayLinkRels)
     {
         $data = array();
         if (!is_null($uri)) {
             $data['self'] = array('href' => $uri);
         }
-        foreach($links as $rel => $links) {
-            if (count($links) === 1 && $rel !== 'curies') {
+        foreach ($links as $rel => $links) {
+            if (count($links) === 1 && $rel !== 'curies' && !in_array($rel, $arrayLinkRels)) {
                 $data[$rel] = array('href' => $links[0]->getUri());
                 foreach ($links[0]->getAttributes() as $attribute => $value) {
                     $data[$rel][$attribute] = $value;
@@ -86,12 +86,16 @@ class HalJsonRenderer implements HalRenderer
      */
     protected function resourcesForJson($resources)
     {
+        if (!is_array($resources)) {
+            return $this->arrayForJson($resources);
+        }
+
         $data = array();
 
         foreach ($resources as $resource) {
             $res = $this->arrayForJson($resource);
 
-            if(!empty($res)){
+            if (!empty($res)) {
                 $data[] = $res;
             }
         }
@@ -135,20 +139,24 @@ class HalJsonRenderer implements HalRenderer
      */
     protected function arrayForJson(Hal $resource = null)
     {
-        if ($resource == null){
+        if ($resource == null) {
             return array();
         }
 
         $data = $resource->getData();
         $data = $this->stripAttributeMarker($data);
 
-        $links = $this->linksForJson($resource->getUri(), $resource->getLinks());
+        $links = $this->linksForJson($resource->getUri(), $resource->getLinks(), $resource->getArrayLinkRels());
         if (count($links)) {
             $data['_links'] = $links;
         }
 
-        foreach($resource->getResources() as $rel => $resources) {
-            $data['_embedded'][$rel] = $this->resourcesForJson($resources);
+        foreach ($resource->getRawResources() as $rel => $resources) {
+            $embedded = $this->resourcesForJson($resources);
+            if (count($embedded) === 1 && !in_array($rel, $resource->getArrayResourceRels())) {
+                $embedded = $embedded[0];
+            } 
+            $data['_embedded'][$rel] = $embedded;
         }
 
         return $data;

@@ -59,6 +59,20 @@ class Hal
     protected $links = null;
 
     /**
+     * A list of rel types for links that will force a rel type to array for one element
+     *
+     * @var array 
+     */
+    protected $arrayLinkRels = array();
+    
+    /**
+     * A list of rel types for links that will force a rel type to array for one element
+     *
+     * @var array 
+     */
+    protected $arrayResourceRels = array();
+
+    /**
      * Construct a new Hal object from an array of data. You can markup the
      * $data array with certain keys and values in order to affect the
      * generated JSON or XML documents if required to do so.
@@ -95,103 +109,29 @@ class Hal
     /**
      * Decode a application/hal+json document into a Nocarrier\Hal object.
      *
-     * @param string $text
-     * @param int $max_depth
+     * @param string $data
+     * @param int $depth
      * @static
      * @access public
      * @return \Nocarrier\Hal
      */
-    public static function fromJson($text, $max_depth = 0)
+    public static function fromJson($data, $depth = 0)
     {
-        $data = json_decode($text, true);
-        $uri = isset($data['_links']['self']['href']) ? $data['_links']['self']['href'] : "";
-        unset ($data['_links']['self']);
-
-        $links = isset($data['_links']) ? $data['_links'] : array();
-        unset ($data['_links']);
-
-        $embedded = isset($data['_embedded']) ? $data['_embedded'] : array();
-        unset ($data['_embedded']);
-
-        $hal = new static($uri, $data);
-        foreach ($links as $rel => $links) {
-            if (!isset($links[0]) or !is_array($links[0])) {
-                $links = array($links);
-            }
-
-            foreach ($links as $link) {
-                $href = $link['href'];
-                unset($link['href'], $link['title']);
-                $hal->addLink($rel, $href, $link);
-            }
-        }
-
-        if ($max_depth > 0) {
-            foreach ($embedded as $rel => $embed) {
-                if (!is_array($embed)) {
-                    $hal->addResource($rel, self::fromJson(json_encode($embed), $max_depth - 1));
-                } else {
-                    foreach ($embed as $child_resource) {
-                        $hal->addResource($rel, self::fromJson(json_encode($child_resource), $max_depth - 1));
-                    }
-                }
-            }
-        }
-
-        return $hal;
+        return JsonHalFactory::fromJson(new static(), $data, $depth);
     }
 
     /**
      * Decode a application/hal+xml document into a Nocarrier\Hal object.
      *
-     * @param string $text
-     * @param int $max_depth
+     * @param int $depth
      *
      * @static
      * @access public
      * @return \Nocarrier\Hal
      */
-    public static function fromXml($text, $max_depth = 0)
+    public static function fromXml($data, $depth = 0)
     {
-        if (!$text instanceof \SimpleXMLElement) {
-            $data = new \SimpleXMLElement($text);
-        } else {
-            $data = $text;
-        }
-        $children = $data->children();
-        $links = clone $children->link;
-        unset ($children->link);
-
-        $embedded = clone $children->resource;
-        unset ($children->resource);
-
-        $hal = new static((string)$data->attributes()->href, (array) $children);
-        foreach ($links as $links) {
-            if (!is_array($links)) {
-                $links = array($links);
-            }
-            foreach ($links as $link) {
-                $attributes = (array)$link->attributes();
-                $attributes = $attributes['@attributes'];
-                $rel = $attributes['rel'];
-                $href = $attributes['href'];
-                unset($attributes['rel'], $attributes['href']);
-                $hal->addLink($rel, $href, $attributes);
-            }
-        }
-
-        if ($max_depth > 0) {
-            foreach ($embedded as $embed) {
-                $attributes = (array)$embed->attributes();
-                $attributes = $attributes['@attributes'];
-                $rel        = $attributes['rel'];
-                unset($attributes['rel'], $attributes['href']);
-
-                $hal->addResource($rel, self::fromXml($embed, $max_depth - 1));
-            }
-        }
-
-        return $hal;
+        return XmlHalFactory::fromXml(new static(), $data, $depth);
     }
 
     /**
@@ -201,11 +141,16 @@ class Hal
      * @param string $uri
      * @param array $attributes
      *   Other attributes, as defined by HAL spec and RFC 5988.
+     * @param bool $forceArray whether to force a rel to be an array if it has only one entry
      * @return \Nocarrier\Hal
      */
-    public function addLink($rel, $uri, array $attributes = array())
+    public function addLink($rel, $uri, array $attributes = array(), $forceArray = false)
     {
         $this->links[$rel][] = new HalLink($uri, $attributes);
+
+        if ($forceArray) {
+            $this->arrayLinkRels[] = $rel;
+        }
 
         return $this;
     }
@@ -218,9 +163,41 @@ class Hal
      *
      * @return \Nocarrier\Hal
      */
-    public function addResource($rel, \Nocarrier\Hal $resource = null)
+    public function addResource($rel, \Nocarrier\Hal $resource = null, $forceArray = true)
     {
         $this->resources[$rel][] = $resource;
+
+        if ($forceArray) {
+            $this->arrayResourceRels[] = $rel;
+        }
+        
+        return $this;
+    }
+
+    /**
+     * Set an embedded resource, identified by $rel and represented by $resource
+     *
+     * Using this method signifies that $rel will only ever be a single object
+     * (only really relevant to JSON rendering)
+     *
+     * @param string $rel
+     * @param Hal $resource
+     */
+    public function setResource($rel, $resource)
+    {
+        if (is_array($resource)) {
+            foreach ($resource as $r) {
+                $this->addResource($rel, $r);
+            }
+
+            return $this;
+        }
+
+        if (!($resource instanceof Hal)) {
+            throw new \InvalidArgumentException('$resource should be of type array or Nocarrier\Hal');
+        }
+
+        $this->resources[$rel] = $resource;
 
         return $this;
     }
@@ -231,6 +208,7 @@ class Hal
     public function setData(Array $data = null)
     {
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -274,7 +252,40 @@ class Hal
      */
     public function getResources()
     {
+        $resources = array_map(function ($resource) {
+            return is_array($resource) ? $resource : array($resource);
+        }, $this->getRawResources());
+
+        return $resources;
+    }
+
+    /**
+     * Return an array of Nocarrier\Hal objected embedded in this one. Each key
+     * may contain an array of resources, or a single resource. For a
+     * consistent approach, use getResources
+     *
+     * @return array
+     */
+    public function getRawResources()
+    {
         return $this->resources;
+    }
+
+    /**
+     * Get the first resource for a given rel. Useful if you're only expecting
+     * one resource, or you don't care about subsequent resources
+     *
+     * @return Hal
+     */
+    public function getFirstResource($rel)
+    {
+        $resources = $this->getResources();
+
+        if (isset($resources[$rel])) {
+            return $resources[$rel][0];
+        }
+
+        return null;
     }
 
     /**
@@ -283,6 +294,7 @@ class Hal
     public function setUri($uri)
     {
         $this->uri = $uri;
+        return $this;
     }
 
     /**
@@ -342,5 +354,21 @@ class Hal
     public function addCurie($name, $uri)
     {
         return $this->addLink('curies', $uri, array('name' => $name, 'templated' => true));
+    }
+
+    /**
+     * Get a list of rel types for links that will be forced to an array for one element
+     */
+    public function getArrayLinkRels()
+    {
+        return $this->arrayLinkRels;
+    }
+
+    /**
+     * Get a list of rel types for resources that will be forced to an array for one element
+     */
+    public function getArrayResourceRels()
+    {
+        return $this->arrayResourceRels;
     }
 }
