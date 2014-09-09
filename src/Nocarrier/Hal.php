@@ -64,6 +64,13 @@ class Hal
      * @var array 
      */
     protected $arrayLinkRels = array();
+    
+    /**
+     * A list of rel types for links that will force a rel type to array for one element
+     *
+     * @var array 
+     */
+    protected $arrayResourceRels = array();
 
     /**
      * Construct a new Hal object from an array of data. You can markup the
@@ -156,9 +163,13 @@ class Hal
      *
      * @return \Nocarrier\Hal
      */
-    public function addResource($rel, \Nocarrier\Hal $resource = null)
+    public function addResource($rel, \Nocarrier\Hal $resource = null, $forceArray = true)
     {
         $this->resources[$rel][] = $resource;
+
+        if ($forceArray) {
+            $this->arrayResourceRels[] = $rel;
+        }
         
         return $this;
     }
@@ -351,5 +362,13 @@ class Hal
     public function getArrayLinkRels()
     {
         return $this->arrayLinkRels;
+    }
+
+    /**
+     * Get a list of rel types for resources that will be forced to an array for one element
+     */
+    public function getArrayResourceRels()
+    {
+        return $this->arrayResourceRels;
     }
 }

@@ -152,7 +152,11 @@ class HalJsonRenderer implements HalRenderer
         }
 
         foreach ($resource->getRawResources() as $rel => $resources) {
-            $data['_embedded'][$rel] = $this->resourcesForJson($resources);
+            $embedded = $this->resourcesForJson($resources);
+            if (count($embedded) === 1 && !in_array($rel, $resource->getArrayResourceRels())) {
+                $embedded = $embedded[0];
+            } 
+            $data['_embedded'][$rel] = $embedded;
         }
 
         return $data;
