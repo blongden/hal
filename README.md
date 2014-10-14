@@ -40,7 +40,7 @@ following composer.json will download and install the latest version of the Hal 
 ```json
 {
     "require": {
-        "nocarrier/hal": "0.9.*"
+        "nocarrier/hal": "~0.9"
     }
 }
 ```
