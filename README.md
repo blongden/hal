@@ -35,14 +35,10 @@ echo $hal->asXml();
 ## Installation
 
 The preferred method of installation is via packagist as this provides the PSR-0 autoloader functionality. The
-following composer.json will download and install the latest version of the Hal library into your project.
+following command will download and install the latest version of the Hal library into your project.
 
-```json
-{
-    "require": {
-        "nocarrier/hal": "~0.9"
-    }
-}
+```
+php composer.phar require nocarrier/hal
 ```
 
 Alternatively, clone the project and install into your project manually.
