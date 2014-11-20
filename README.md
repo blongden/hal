@@ -84,8 +84,8 @@ $hal = \Nocarrier\Hal::fromXml($xmlString);
 $hal = \Nocarrier\Hal::fromXml($simpleXMLElement);
 ```
 
-The depth of embedded resources prased with both these methods is controlled by
-a second argument, which defaulst to 0:
+The depth of embedded resources parsed with both these methods is controlled by
+a second argument, which defaults to 0:
 
 ```php
 $hal = \Nocarrier\Hal::fromJson($jsonString, 5);
@@ -100,7 +100,7 @@ $hal = new \Nocarrier\Hal('/orders', ['customerId' => 'CUS1234']);
 $hal->asJson();
 ```
 
-which with a first argument of `true` for pretty printing gives:
+which with a first argument of `true` for pretty printing:
 
 ```php
 $hal = new \Nocarrier\Hal('/orders', ['customerId' => 'CUS1234']);
@@ -117,6 +117,8 @@ gives:
     }
 }
 ```
+
+and
 
 ```php
 $hal = new \Nocarrier\Hal('/orders', ['customerId' => 'CUS1234']);
