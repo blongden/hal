@@ -144,7 +144,9 @@ class HalJsonRenderer implements HalRenderer
         }
 
         $data = $resource->getData();
-        $data = $this->stripAttributeMarker($data);
+        if ($resource->getShouldStripAttributes()) {
+            $data = $this->stripAttributeMarker($data);
+        }
 
         $links = $this->linksForJson($resource->getUri(), $resource->getLinks(), $resource->getArrayLinkRels());
         if (count($links)) {
@@ -155,7 +157,7 @@ class HalJsonRenderer implements HalRenderer
             $embedded = $this->resourcesForJson($resources);
             if (count($embedded) === 1 && !in_array($rel, $resource->getArrayResourceRels())) {
                 $embedded = $embedded[0];
-            } 
+            }
             $data['_embedded'][$rel] = $embedded;
         }
 

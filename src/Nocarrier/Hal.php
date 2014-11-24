@@ -61,16 +61,23 @@ class Hal
     /**
      * A list of rel types for links that will force a rel type to array for one element
      *
-     * @var array 
+     * @var array
      */
     protected $arrayLinkRels = array();
-    
+
     /**
      * A list of rel types for links that will force a rel type to array for one element
      *
-     * @var array 
+     * @var array
      */
     protected $arrayResourceRels = array();
+
+    /**
+     * Whether xml attribute markers should be stripped when rendering
+     *
+     * @var string
+     */
+    protected $shouldStripAttributes = true;
 
     /**
      * Construct a new Hal object from an array of data. You can markup the
@@ -170,7 +177,7 @@ class Hal
         if ($forceArray) {
             $this->arrayResourceRels[] = $rel;
         }
-        
+
         return $this;
     }
 
@@ -371,4 +378,16 @@ class Hal
     {
         return $this->arrayResourceRels;
     }
+
+    public function getShouldStripAttributes()
+    {
+        return $this->shouldStripAttributes;
+    }
+
+    public function setShouldStripAttributes($shouldStripAttributes)
+    {
+        $this->shouldStripAttributes = $shouldStripAttributes;
+        return $this;
+    }
+
 }

@@ -51,7 +51,7 @@ class XmlHalFactory
                 $hal->addResource($rel, self::fromXml($embed, $depth - 1));
             }
         }
-
+        $hal->setShouldStripAttributes(false);
         return $hal;
     }
 
