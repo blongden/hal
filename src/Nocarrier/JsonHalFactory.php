@@ -22,7 +22,7 @@ class JsonHalFactory
         if ($depth > 0) {
             self::setEmbeddedResources($hal, $embedded, $depth);
         }
-
+        $hal->setShouldStripAttributes(false);
         return $hal;
     }
 
