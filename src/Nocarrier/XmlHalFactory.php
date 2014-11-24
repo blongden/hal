@@ -7,8 +7,11 @@ class XmlHalFactory
     /**
      * Decode a application/hal+xml document into a Nocarrier\Hal object.
      *
+     * @param Hal $hal
+     * @param $data
      * @param int $depth
      *
+     * @throws \RuntimeException
      * @static
      * @access public
      * @return \Nocarrier\Hal
@@ -16,7 +19,11 @@ class XmlHalFactory
     public static function fromXml(Hal $hal, $data, $depth = 0)
     {
         if (!$data instanceof \SimpleXMLElement) {
-            $data = new \SimpleXMLElement($data);
+            try {
+                $data = new \SimpleXMLElement($data);
+            } catch (\Exception $e) {
+                throw new \RuntimeException('The $data parameter must be valid XML');
+            }
         }
 
         $children = $data->children();
@@ -44,7 +51,7 @@ class XmlHalFactory
                 $hal->addResource($rel, self::fromXml($embed, $depth - 1));
             }
         }
-
+        $hal->setShouldStripAttributes(false);
         return $hal;
     }
 

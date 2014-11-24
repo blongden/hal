@@ -15,6 +15,7 @@ namespace Nocarrier\Tests;
 require_once 'vendor/autoload.php';
 
 use \Nocarrier\Hal;
+use \Nocarrier\JsonHalFactory;
 
 /**
  * HalTest
@@ -533,7 +534,7 @@ EOD;
     {
         $x = new Hal('/orders');
         $x->addCurie('acme', 'http://docs.acme.com/relations/{rel}');
-    
+
         $x->addLink('acme:test', '/widgets');
 
         $links = $x->getLink('http://docs.acme.com/relations/test');
@@ -623,7 +624,7 @@ EOD;
 
     public function testSetResourceThrowsIfNotPassedAHalOrArray()
     {
-        $this->setExpectedException('\InvalidArgumentException', '$resource should be of type array or Nocarrier\Hal');    
+        $this->setExpectedException('\InvalidArgumentException', '$resource should be of type array or Nocarrier\Hal');
         $hal = new Hal('http://example.com/');
         $hal->setResource('resource', new \stdClass());
     }
@@ -736,5 +737,37 @@ JSON;
     {
         $invalidJson = 'foo';
         Hal::fromJson($invalidJson);
+    }
+
+    public function testCanDefineThatAttributesShouldNotBeStripped()
+    {
+        $hal = new Hal('http://example.com/');
+        $hal->setShouldStripAttributes(false);
+        $this->assertEquals(false, $hal->getShouldStripAttributes());
+    }
+
+    public function testStripAttributeMarkersIsNotCalledWhenRenderingWithStripAttributesSetToFalse()
+    {
+        $hal = new Hal('http://example.com/', array('@xml:key' => 'value'));
+        $hal->setShouldStripAttributes(false);
+        $json = json_decode($hal->asJson(true));
+        $this->assertEquals('value', $json->{'@xml:key'});
+    }
+
+    public function testStripAttributeMarkersIsNotCalledWhenRenderingFromJSON()
+    {
+        $sample = <<<JSON
+{
+    "@xml:key": "value",
+    "_links": {
+        "self": {
+            "href": "http://example.com/"
+        }
+    }
+}
+JSON;
+        $hal = JsonHalFactory::fromJson(new Hal(), $sample);
+        $json = json_decode($hal->asJson(true));
+        $this->assertEquals('value', $json->{'@xml:key'});
     }
 }
