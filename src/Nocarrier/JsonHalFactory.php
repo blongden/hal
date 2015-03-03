@@ -59,7 +59,7 @@ class JsonHalFactory
 
             foreach ($links as $link) {
                 $href = $link['href'];
-                unset($link['href'], $link['title']);
+                unset($link['href']);
                 $hal->addLink($rel, $href, $link);
             }
         }
