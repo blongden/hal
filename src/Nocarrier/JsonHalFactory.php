@@ -49,6 +49,7 @@ class JsonHalFactory
 
     /**
      * @param Hal $hal
+     * @param array $links
      */
     private static function addJsonLinkData($hal, $links)
     {
@@ -66,6 +67,8 @@ class JsonHalFactory
     }
 
     /**
+     * @param Hal $hal
+     * @param array $embedded
      * @param integer $depth
      */
     private static function setEmbeddedResources(Hal $hal, $embedded, $depth)
