@@ -25,6 +25,7 @@ class HalJsonRenderer implements HalRenderer
      *
      * @param \Nocarrier\Hal $resource
      * @param bool $pretty
+     * @param bool $encode
      * @return string
      */
     public function render(Hal $resource, $pretty, $encode = true)
