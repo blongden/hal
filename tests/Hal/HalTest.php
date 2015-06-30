@@ -530,6 +530,15 @@ EOD;
         $this->assertEquals('/test/orders', $links[0]);
     }
 
+    public function testGetFirstLinkByRelation()
+    {
+        $x = new Hal('/orders');
+        $x->addLink('test', '/test/orders');
+
+        $links = $x->getFirstLink('test');
+        $this->assertEquals('/test/orders', $links);
+    }
+
     public function testGetLinkByCurieRelation()
     {
         $x = new Hal('/orders');
