@@ -294,6 +294,23 @@ class Hal
 
         return null;
     }
+    
+    /**
+     * Get the first link for a given rel. Useful if you're only expecting
+     * one link, or you don't care about subsequent links
+     *
+     * @return Hal
+     */
+    public function getFirstLink($rel)
+    {
+        $link = $this->getLink($rel);
+
+        if ($link) {
+            return $link[0];
+        }
+
+        return null;
+    }
 
     /**
      * Set resource's URI
