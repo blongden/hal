@@ -80,6 +80,31 @@ class HalLink
     }
 
     /**
+     * Set a particular attribute on this link.
+     *
+     * @param string $name
+     *   Name of the attribute to set.
+     * @param mixed $value
+     *   Value to set the attribute to.
+     * @return void
+     */
+    public function setAttribute($name, $value)
+    {
+        $this->attributes[$name] = $value;
+    }
+
+    /**
+     * Set the attributes on this link.
+     *
+     * @param array $attributes
+     *   Attibutes to set on this link.
+     */
+    public function setAttributes(array $attributes)
+    {
+        $this->attributes = $attributes;
+    }
+
+    /**
      * The string representation of this link (the URI).
      *
      * return string
