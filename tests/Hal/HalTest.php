@@ -124,8 +124,6 @@ EOD;
         $this->assertEquals($resource->_embedded->resource->field2, 'value2');
     }
 
-
-
     public function testResourceXmlResponse()
     {
         $hal = new Hal('http://example.com/');
@@ -778,5 +776,19 @@ JSON;
         $hal = JsonHalFactory::fromJson(new Hal(), $sample);
         $json = json_decode($hal->asJson(true));
         $this->assertEquals('value', $json->{'@xml:key'});
+    }
+
+    public function testEmbeddingResourceWithSingleElement()
+    {
+        $hal = new Hal();
+
+        $hal->setResource(
+            'foo',
+            (new Hal())->setResource('bar', new Hal())
+        );
+
+        $json = json_decode($hal->asJson());
+        var_dump($json);
+        $this->assertInternalType('array', $json->_embedded->foo->_embedded->bar);
     }
 }

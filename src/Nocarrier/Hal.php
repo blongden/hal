@@ -204,7 +204,7 @@ class Hal
             throw new \InvalidArgumentException('$resource should be of type array or Nocarrier\Hal');
         }
 
-        $this->resources[$rel] = $resource;
+        $this->resources[$rel][] = $resource;
 
         return $this;
     }
