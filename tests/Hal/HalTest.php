@@ -788,7 +788,6 @@ JSON;
         );
 
         $json = json_decode($hal->asJson());
-        var_dump($json);
         $this->assertInternalType('array', $json->_embedded->foo->_embedded->bar);
     }
 }
