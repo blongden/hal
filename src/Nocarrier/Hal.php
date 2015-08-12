@@ -153,7 +153,20 @@ class Hal
      */
     public function addLink($rel, $uri, array $attributes = array(), $forceArray = false)
     {
-        $this->links[$rel][] = new HalLink($uri, $attributes);
+        return $this->setLink($rel, new HalLink($uri, $attributes), $forceArray);
+    }
+
+    /**
+     * Set a link instance to the resource, identified by $rel.
+     *
+     * @param string $rel
+     * @param HalLink $link
+     * @param bool $forceArray whether to force a rel to be an array if it has only one entry
+     * @return \Nocarrier\Hal
+     */
+    public function setLink($rel, HalLink $link, $forceArray = false)
+    {
+        $this->links[$rel][] = $link;
 
         if ($forceArray) {
             $this->arrayLinkRels[] = $rel;
@@ -294,7 +307,7 @@ class Hal
 
         return null;
     }
-    
+
     /**
      * Get the first link for a given rel. Useful if you're only expecting
      * one link, or you don't care about subsequent links
