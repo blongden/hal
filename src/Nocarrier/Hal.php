@@ -153,18 +153,18 @@ class Hal
      */
     public function addLink($rel, $uri, array $attributes = array(), $forceArray = false)
     {
-        return $this->setLink($rel, new HalLink($uri, $attributes), $forceArray);
+        return $this->addHalLink($rel, new HalLink($uri, $attributes), $forceArray);
     }
 
     /**
-     * Set a link instance to the resource, identified by $rel.
+     * Add a link instance to the resource, identified by $rel.
      *
      * @param string $rel
      * @param HalLink $link
      * @param bool $forceArray whether to force a rel to be an array if it has only one entry
      * @return \Nocarrier\Hal
      */
-    public function setLink($rel, HalLink $link, $forceArray = false)
+    public function addHalLink($rel, HalLink $link, $forceArray = false)
     {
         $this->links[$rel][] = $link;
 

@@ -276,6 +276,7 @@ EOD;
 
     /**
      * @covers \Nocarrier\Hal::addLink
+     * @covers \Nocarrier\Hal::addHalLink
      * @covers \Nocarrier\HalJsonRenderer::linksForJson
      */
     public function testLinkAttributesInJson()
@@ -345,6 +346,7 @@ EOD;
 
     /**
      * @covers \Nocarrier\Hal::addLink
+     * @covers \Nocarrier\Hal::addHalLink
      * @covers \Nocarrier\HalXmlRenderer::linksForXml
      */
     public function testLinkAttributesInXml()
