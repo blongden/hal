@@ -792,4 +792,11 @@ JSON;
         $json = json_decode($hal->asJson());
         $this->assertInternalType('array', $json->_embedded->foo->_embedded->bar);
     }
+
+    public function testErrorAddResource()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+        $hal = new Hal();
+        $hal->addResource(new Hal());
+    }
 }

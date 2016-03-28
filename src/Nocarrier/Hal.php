@@ -185,6 +185,12 @@ class Hal
      */
     public function addResource($rel, \Nocarrier\Hal $resource = null, $forceArray = true)
     {
+        if (!is_string($rel)) {
+            throw new \InvalidArgumentException(
+                "Argument 1 passed to Hal::addResource() must be a string describing the resource relationship"
+            );
+        }
+
         $this->resources[$rel][] = $resource;
 
         if ($forceArray) {
