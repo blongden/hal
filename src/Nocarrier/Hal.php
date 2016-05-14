@@ -234,10 +234,15 @@ class Hal
     /**
      * Return an array of data (key => value pairs) representing this resource.
      *
+     * @param null|string data key
      * @return array
      */
-    public function getData()
+    public function getData($key = null)
     {
+        if ($key) {
+            return isset($this->data[$key]) ? $this->data[$key] : null;
+        }
+
         return $this->data;
     }
 
@@ -280,6 +285,22 @@ class Hal
     }
 
     /**
+     * Return an array of Nocarrier\Hal objected embedded in this one.
+     *
+     * @return Hal
+     */
+    public function getResource($rel)
+    {
+        $resources = $this->getResources();
+
+        if (isset($resources[$rel])) {
+            return $resources[$rel];
+        }
+
+        return null;
+    }
+
+    /**
      * Return an array of Nocarrier\Hal objected embedded in this one. Each key
      * may contain an array of resources, or a single resource. For a
      * consistent approach, use getResources
@@ -299,10 +320,10 @@ class Hal
      */
     public function getFirstResource($rel)
     {
-        $resources = $this->getResources();
+        $resource = $this->getResource($rel);
 
-        if (isset($resources[$rel])) {
-            return $resources[$rel][0];
+        if ($resource) {
+            return $resource[0];
         }
 
         return null;

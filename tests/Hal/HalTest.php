@@ -690,10 +690,8 @@ EOD;
         }
 JSON;
         $resources = Hal::fromJson($sample, 1)->getResources();
-        $data = $resources['item'][0]->getData();
-        $this->assertEquals('value1', $data['key']);
-        $data = $resources['item'][1]->getData();
-        $this->assertEquals('value2', $data['key']);
+        $this->assertEquals('value1', $resources['item'][0]->getData('key'));
+        $this->assertEquals('value2', $resources['item'][1]->getData('key'));
     }
 
     public function testHalJsonDecodeWithSingleEmbeddedItem()
