@@ -240,7 +240,7 @@ class Hal
     public function getData($key = null)
     {
         if ($key) {
-            return isset($this->data[$key]) ? $this->data[$key] : null;
+            return isset($this->data[$key]) ? $this->data[$key] : array();
         }
 
         return $this->data;
