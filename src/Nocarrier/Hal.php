@@ -318,7 +318,7 @@ class Hal
      * Get the first link for a given rel. Useful if you're only expecting
      * one link, or you don't care about subsequent links
      *
-     * @return Hal
+     * @return HalLink
      */
     public function getFirstLink($rel)
     {
