@@ -241,7 +241,7 @@ class Hal
      * Return an array of data (key => value pairs) representing this resource.
      *
      * @param null|string data key
-     * @return array
+     * @return mixed Returns an array if no key is passed in, otherwise returns the data
      */
     public function getData($key = null)
     {
