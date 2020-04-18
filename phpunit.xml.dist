@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit colors="true" stopOnFailure="false" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true">
+<phpunit colors="true" stopOnFailure="false" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" bootstrap="vendor/autoload.php">
     <testsuites>
         <testsuite name="Nocarrier Hal Test Suite">
             <directory>./tests/Hal/</directory>
         </testsuite>
     </testsuites>
     <filter>
-        <blacklist>
-            <file>systemlib.phpreflection_hni</file>
-        </blacklist>
+        <whitelist>
+            <directory>./src/</directory>
+        </whitelist>
     </filter>
     <logging>
         <log type="coverage-html" target="build/coverage"
-            charset="UTF-8" yui="true" highlight="true"
             lowUpperBound="35" highLowerBound="70"/>
         <log type="coverage-clover" target="build/logs/clover.xml"/>
-        <log type="junit" target="build/logs/junit.xml"
-            logIncompleteSkipped="false"/>
+        <log type="junit" target="build/logs/junit.xml"/>
     </logging>
 </phpunit>
