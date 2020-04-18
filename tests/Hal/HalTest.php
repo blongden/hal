@@ -12,8 +12,6 @@
 
 namespace Nocarrier\Tests;
 
-require_once 'vendor/autoload.php';
-
 use \Nocarrier\Hal;
 use \Nocarrier\JsonHalFactory;
 
@@ -24,7 +22,7 @@ use \Nocarrier\JsonHalFactory;
  * @subpackage Tests
  * @author Ben Longden <ben@nocarrier.co.uk>
  */
-class HalTest extends \PHPUnit_Framework_TestCase
+class HalTest extends TestCase
 {
     public function testHalJsonResponseAllowsNoSelfLink()
     {
