@@ -31,7 +31,7 @@ class HalLinkContainer extends \ArrayObject
      */
     public function get($rel)
     {
-        if (array_key_exists($rel, $this)) {
+        if (array_key_exists($rel, (array) $this)) {
             return $this[$rel];
         }
 
