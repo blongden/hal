@@ -379,7 +379,7 @@ class Hal
      *   Enable pretty-printing.
      * @param bool $encode
      *   Run through json_encode
-     * @return string
+     * @return string|array
      */
     public function asJson($pretty = false, $encode = true)
     {
