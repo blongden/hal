@@ -102,7 +102,7 @@ EOD;
 
         $resource = json_decode($hal->asJson());
         $this->assertInstanceOf('StdClass', $resource->_embedded);
-        $this->assertInternalType('array', $resource->_embedded->resource);
+        $this->assertIsArray( $resource->_embedded->resource);
         $this->assertEquals($resource->_embedded->resource[0]->_links->self->href, '/resource/1');
         $this->assertEquals($resource->_embedded->resource[0]->field1, 'value1');
         $this->assertEquals($resource->_embedded->resource[0]->field2, 'value2');
@@ -150,7 +150,7 @@ EOD;
 
         $hal->addResource('resource', $res);
         $result = json_decode($hal->asJson());
-        $this->assertInternalType('array', $result->_embedded->resource[0]->_embedded->item);
+        $this->assertIsArray( $result->_embedded->resource[0]->_embedded->item);
         $this->assertEquals('/resource/1/item/1', $result->_embedded->resource[0]->_embedded->item[0]->_links->self->href);
         $this->assertEquals('itemValue1', $result->_embedded->resource[0]->_embedded->item[0]->itemField1);
     }
@@ -513,7 +513,7 @@ EOD;
         $x = new Hal('/orders');
         $x->addCurie('acme', 'http://docs.acme.com/relations/{rel}');
         $obj = json_decode($x->asJson());
-        $this->assertInternalType('array', $obj->_links->curies);
+        $this->assertIsArray( $obj->_links->curies);
         $this->assertTrue($obj->_links->curies[0]->templated);
         $this->assertEquals('acme', $obj->_links->curies[0]->name);
         $this->assertEquals('http://docs.acme.com/relations/{rel}', $obj->_links->curies[0]->href);
@@ -624,7 +624,7 @@ EOD;
 
         $resource = json_decode($hal->asJson());
         $this->assertInstanceOf('StdClass', $resource->_embedded);
-        $this->assertInternalType('array', $resource->_embedded->resource);
+        $this->assertIsArray( $resource->_embedded->resource);
         $this->assertEquals($resource->_embedded->resource[0]->field1, '1');
         $this->assertEquals($resource->_embedded->resource[1]->field1, '2');
     }
@@ -735,11 +735,9 @@ JSON;
         $this->assertEquals($res1, $hal->getFirstResource("resource"));
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testHalFromJsonThrowsExceptionOnInvalidJSON()
     {
+        $this->expectException('RuntimeException');
         $invalidJson = 'foo';
         Hal::fromJson($invalidJson);
     }
@@ -786,7 +784,7 @@ JSON;
         );
 
         $json = json_decode($hal->asJson());
-        $this->assertInternalType('array', $json->_embedded->foo->_embedded->bar);
+        $this->assertIsArray( $json->_embedded->foo->_embedded->bar);
     }
 
     public function testErrorAddResource()
