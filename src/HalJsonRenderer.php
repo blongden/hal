@@ -135,14 +135,16 @@ class HalJsonRenderer implements HalRenderer
      * Return an array (compatible with the hal+json format) representing the
      * complete response.
      *
-     * @param \Nocarrier\Hal $resource
+     * @param \Nocarrier\Hal|null $resource
      * @return array
      */
-    protected function arrayForJson(Hal $resource = null)
+    protected function arrayForJson($resource = null)
     {
         if ($resource == null) {
             return array();
         }
+
+        assert($resource instanceof Hal);
 
         $data = $resource->getData();
         if ($resource->getShouldStripAttributes()) {

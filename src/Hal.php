@@ -179,11 +179,11 @@ class Hal
      * Add an embedded resource, identified by $rel and represented by $resource.
      *
      * @param string $rel
-     * @param \Nocarrier\Hal $resource
+     * @param \Nocarrier\Hal|null $resource
      *
      * @return \Nocarrier\Hal
      */
-    public function addResource($rel, \Nocarrier\Hal $resource = null, $forceArray = true)
+    public function addResource($rel, $resource = null, $forceArray = true)
     {
         if (!is_string($rel)) {
             throw new \InvalidArgumentException(
@@ -231,7 +231,7 @@ class Hal
     /**
      * Set resource's data
      */
-    public function setData(Array $data = null)
+    public function setData($data = null)
     {
         $this->data = $data;
         return $this;
