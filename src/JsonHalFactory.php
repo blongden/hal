@@ -15,7 +15,7 @@ class JsonHalFactory
      */
     public static function fromJson(Hal $hal, $text, $depth = 0)
     {
-        list($uri, $links, $embedded, $data) = self::prepareJsonData($text);
+        [$uri, $links, $embedded, $data] = self::prepareJsonData($text);
         $hal->setUri($uri)->setData($data);
         self::addJsonLinkData($hal, $links);
 
@@ -35,16 +35,16 @@ class JsonHalFactory
         if (json_last_error() != JSON_ERROR_NONE) {
             throw new \RuntimeException('The $text parameter must be valid JSON');
         }
-        $uri = isset($data['_links']['self']['href']) ? $data['_links']['self']['href'] : "";
+        $uri = $data['_links']['self']['href'] ?? "";
         unset ($data['_links']['self']);
 
-        $links = isset($data['_links']) ? $data['_links'] : array();
+        $links = $data['_links'] ?? [];
         unset ($data['_links']);
 
-        $embedded = isset($data['_embedded']) ? $data['_embedded'] : array();
+        $embedded = $data['_embedded'] ?? [];
         unset ($data['_embedded']);
 
-        return array($uri, $links, $embedded, $data);
+        return [$uri, $links, $embedded, $data];
     }
 
     /**
@@ -55,7 +55,7 @@ class JsonHalFactory
     {
         foreach ($links as $rel => $links) {
             if (!isset($links[0]) or !is_array($links[0])) {
-                $links = array($links);
+                $links = [$links];
             }
 
             foreach ($links as $link) {
@@ -75,7 +75,7 @@ class JsonHalFactory
     {
         foreach ($embedded as $rel => $embed) {
             $isIndexed = array_values($embed) === $embed;
-            $className = get_class($hal);
+            $className = $hal::class;
             if (!$isIndexed) {
                 $hal->setResource($rel, self::fromJson(new $className, json_encode($embed), $depth - 1));
             } else {

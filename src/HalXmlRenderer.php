@@ -85,7 +85,7 @@ class HalXmlRenderer implements HalRenderer
     protected function arrayToXml($data, \SimpleXmlElement $element, $parent = null)
     {
         foreach ($data as $key => $value) {
-            if (is_array($value) || $value instanceof \Traversable) {
+            if (is_iterable($value)) {
                 if (!is_numeric($key)) {
                     if (count($value) > 0 && isset($value[0])) {
                         $this->arrayToXml($value, $element, $key);
@@ -99,17 +99,17 @@ class HalXmlRenderer implements HalRenderer
                 }
             } else {
                 if (!is_numeric($key)) {
-                    if (substr($key, 0, 1) === '@') {
+                    if (str_starts_with($key, '@')) {
                         $element->addAttribute(substr($key, 1), $value);
                     } elseif ($key === 'value' and count($data) === 1) {
                         $element[0] = $value;
                     } elseif (is_bool($value)) {
                         $element->addChild($key, intval($value));
                     } else {
-                        $element->addChild($key, htmlspecialchars($value, ENT_QUOTES));
+                        $element->addChild($key, htmlspecialchars((string) $value, ENT_QUOTES));
                     }
                 } else {
-                    $element->addChild($parent, htmlspecialchars($value, ENT_QUOTES));
+                    $element->addChild($parent, htmlspecialchars((string) $value, ENT_QUOTES));
                 }
             }
         }
@@ -128,7 +128,7 @@ class HalXmlRenderer implements HalRenderer
     protected function resourcesForXml(\SimpleXmlElement $doc, $rel, $resources)
     {
         if (!is_array($resources)) {
-            $resources = array($resources);
+            $resources = [$resources];
         }
 
         foreach($resources as $resource) {

@@ -21,13 +21,6 @@ namespace Nocarrier;
 class Hal
 {
     /**
-     * The uri represented by this representation.
-     *
-     * @var string
-     */
-    protected $uri;
-
-    /**
      * The data for this resource. An associative array of key value pairs.
      *
      * array(
@@ -44,7 +37,7 @@ class Hal
      *
      * @var array
      */
-    protected $resources = array();
+    protected $resources = [];
 
     /**
      * A collection of \Nocarrier\HalLink objects keyed by the link relation to
@@ -63,14 +56,14 @@ class Hal
      *
      * @var array
      */
-    protected $arrayLinkRels = array();
+    protected $arrayLinkRels = [];
 
     /**
      * A list of rel types for links that will force a rel type to array for one element
      *
      * @var array
      */
-    protected $arrayResourceRels = array();
+    protected $arrayResourceRels = [];
 
     /**
      * Whether xml attribute markers should be stripped when rendering
@@ -100,10 +93,11 @@ class Hal
      *
      * @throws \RuntimeException
      */
-    public function __construct($uri = null, $data = array())
+    public function __construct(/**
+     * The uri represented by this representation.
+     */
+    protected $uri = null, $data = [])
     {
-        $this->uri = $uri;
-
         if (!is_array($data) && !$data instanceof \Traversable) {
             throw new \RuntimeException(
                 'The $data parameter must be an array or an object implementing the Traversable interface.');
@@ -151,7 +145,7 @@ class Hal
      * @param bool $forceArray whether to force a rel to be an array if it has only one entry
      * @return \Nocarrier\Hal
      */
-    public function addLink($rel, $uri, array $attributes = array(), $forceArray = false)
+    public function addLink($rel, $uri, array $attributes = [], $forceArray = false)
     {
         return $this->addHalLink($rel, new HalLink($uri, $attributes), $forceArray);
     }
@@ -183,7 +177,7 @@ class Hal
      *
      * @return \Nocarrier\Hal
      */
-    public function addResource($rel, \Nocarrier\Hal $resource = null, $forceArray = true)
+    public function addResource($rel, null|\Nocarrier\Hal $resource = null, $forceArray = true)
     {
         if (!is_string($rel)) {
             throw new \InvalidArgumentException(
@@ -231,7 +225,7 @@ class Hal
     /**
      * Set resource's data
      */
-    public function setData(Array $data = null)
+    public function setData(null|Array $data = null)
     {
         $this->data = $data;
         return $this;
@@ -246,7 +240,7 @@ class Hal
     public function getData($key = null)
     {
         if ($key) {
-            return isset($this->data[$key]) ? $this->data[$key] : array();
+            return $this->data[$key] ?? [];
         }
 
         return $this->data;
@@ -283,9 +277,7 @@ class Hal
      */
     public function getResources()
     {
-        $resources = array_map(function ($resource) {
-            return is_array($resource) ? $resource : array($resource);
-        }, $this->getRawResources());
+        $resources = array_map(fn($resource) => is_array($resource) ? $resource : [$resource], $this->getRawResources());
 
         return $resources;
     }
@@ -299,11 +291,7 @@ class Hal
     {
         $resources = $this->getResources();
 
-        if (isset($resources[$rel])) {
-            return $resources[$rel];
-        }
-
-        return null;
+        return $resources[$rel] ?? null;
     }
 
     /**
@@ -417,7 +405,7 @@ class Hal
      */
     public function addCurie($name, $uri)
     {
-        return $this->addLink('curies', $uri, array('name' => $name, 'templated' => true));
+        return $this->addLink('curies', $uri, ['name' => $name, 'templated' => true]);
     }
 
     /**
