@@ -17,6 +17,7 @@ jobs:
           - '8.2'
           - '8.3'
           - '8.4'
+          - '8.5'
 
     steps:
       - name: Checkout code
@@ -47,4 +48,4 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-suggest
 
       - name: Run tests
-        run: ./bin/phpunit --no-coverage
+        run: vendor/bin/phpunit --no-coverage
