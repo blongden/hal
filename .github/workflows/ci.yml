@@ -31,7 +31,7 @@ jobs:
           coverage: none
 
       - name: Validate composer.json
-        run: composer validate --strict
+        run: composer validate --strict --no-check-lock
 
       - name: Get Composer cache directory
         id: composer-cache
