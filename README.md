@@ -1,7 +1,7 @@
 Nocarrier\Hal
 =============
 
-[![Build Status](https://secure.travis-ci.org/blongden/hal.png)](http://travis-ci.org/blongden/hal)
+[![CI](https://github.com/blongden/hal/actions/workflows/ci.yml/badge.svg)](https://github.com/blongden/hal/actions/workflows/ci.yml)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/blongden/hal/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/blongden/hal/?branch=master)
 
 This is a library for creating documents in the [application/hal+json and application/hal+xml][1] hypermedia formats
