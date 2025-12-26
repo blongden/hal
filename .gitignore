@@ -2,3 +2,4 @@ build
 composer.phar
 vendor/
 bin/
+.phpunit.result.cache

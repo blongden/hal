@@ -138,7 +138,7 @@ class HalJsonRenderer implements HalRenderer
      * @param \Nocarrier\Hal $resource
      * @return array
      */
-    protected function arrayForJson(Hal $resource = null)
+    protected function arrayForJson(?Hal $resource = null)
     {
         if ($resource == null) {
             return array();

@@ -183,7 +183,7 @@ class Hal
      *
      * @return \Nocarrier\Hal
      */
-    public function addResource($rel, \Nocarrier\Hal $resource = null, $forceArray = true)
+    public function addResource($rel, ?\Nocarrier\Hal $resource = null, $forceArray = true)
     {
         if (!is_string($rel)) {
             throw new \InvalidArgumentException(
@@ -231,7 +231,7 @@ class Hal
     /**
      * Set resource's data
      */
-    public function setData(Array $data = null)
+    public function setData(?Array $data = null)
     {
         $this->data = $data;
         return $this;
