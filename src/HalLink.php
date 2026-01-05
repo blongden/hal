@@ -17,32 +17,8 @@ namespace Nocarrier;
  * @package Nocarrier
  * @author Ben Longden <ben@nocarrier.co.uk>
  */
-class HalLink
+class HalLink implements \Stringable
 {
-    /**
-     * The URI represented by this HalLink.
-     *
-     * @var string
-     */
-    protected $uri;
-
-    /**
-     * Any attributes on this link.
-     *
-     * array(
-     *  'templated' => 0,
-     *  'type' => 'application/hal+json',
-     *  'deprecation' => 1,
-     *  'name' => 'latest',
-     *  'profile' => 'http://.../profile/order',
-     *  'title' => 'The latest order',
-     *  'hreflang' => 'en'
-     * )
-     *
-     * @var array
-     */
-    protected $attributes;
-
     /**
      * The \Nocarrier\HalLink object.
      *
@@ -53,10 +29,27 @@ class HalLink
      * @param array $attributes
      *   Any additional attributes.
      */
-    public function __construct($uri, $attributes)
+    public function __construct(
+        /**
+         * The URI represented by this HalLink.
+         */
+        protected $uri,
+        /**
+         * Any attributes on this link.
+         *
+         * array(
+         *  'templated' => 0,
+         *  'type' => 'application/hal+json',
+         *  'deprecation' => 1,
+         *  'name' => 'latest',
+         *  'profile' => 'http://.../profile/order',
+         *  'title' => 'The latest order',
+         *  'hreflang' => 'en'
+         * )
+         */
+        protected $attributes
+    )
     {
-        $this->uri = $uri;
-        $this->attributes = $attributes;
     }
 
     /**
@@ -84,7 +77,7 @@ class HalLink
      *
      * return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->uri;
     }

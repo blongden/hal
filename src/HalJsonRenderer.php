@@ -53,20 +53,20 @@ class HalJsonRenderer implements HalRenderer
      */
     protected function linksForJson($uri, $links, $arrayLinkRels)
     {
-        $data = array();
+        $data = [];
         if (!is_null($uri)) {
-            $data['self'] = array('href' => $uri);
+            $data['self'] = ['href' => $uri];
         }
         foreach ($links as $rel => $links) {
             if (count($links) === 1 && $rel !== 'curies' && !in_array($rel, $arrayLinkRels)) {
-                $data[$rel] = array('href' => $links[0]->getUri());
+                $data[$rel] = ['href' => $links[0]->getUri()];
                 foreach ($links[0]->getAttributes() as $attribute => $value) {
                     $data[$rel][$attribute] = $value;
                 }
             } else {
-                $data[$rel] = array();
+                $data[$rel] = [];
                 foreach ($links as $link) {
-                    $item = array('href' => $link->getUri());
+                    $item = ['href' => $link->getUri()];
                     foreach ($link->getAttributes() as $attribute => $value) {
                         $item[$attribute] = $value;
                     }
@@ -91,7 +91,7 @@ class HalJsonRenderer implements HalRenderer
             return $this->arrayForJson($resources);
         }
 
-        $data = array();
+        $data = [];
 
         foreach ($resources as $resource) {
             $res = $this->arrayForJson($resource);
@@ -115,11 +115,11 @@ class HalJsonRenderer implements HalRenderer
     protected function stripAttributeMarker(array $data)
     {
         foreach ($data as $key => $value) {
-            if (substr($key, 0, 5) == '@xml:') {
-                $data[substr($key, 5)] = $value;
+            if (str_starts_with((string) $key, '@xml:')) {
+                $data[substr((string) $key, 5)] = $value;
                 unset ($data[$key]);
-            } elseif (substr($key, 0, 1) == '@') {
-                $data[substr($key, 1)] = $value;
+            } elseif (str_starts_with((string) $key, '@')) {
+                $data[substr((string) $key, 1)] = $value;
                 unset ($data[$key]);
             }
 
@@ -138,10 +138,10 @@ class HalJsonRenderer implements HalRenderer
      * @param \Nocarrier\Hal $resource
      * @return array
      */
-    protected function arrayForJson(Hal $resource = null)
+    protected function arrayForJson(null|Hal $resource = null)
     {
         if ($resource == null) {
-            return array();
+            return [];
         }
 
         $data = $resource->getData();

@@ -13,13 +13,12 @@
   }
   ],
   "require": {
-    "php": ">=5.3.0",
-    "psr/link": "~1.0"
+    "php": "^8.2",
+    "psr/link": "^1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^7.0 || ^6.4 || ^5.7 || ^4.8.35"
+    "phpunit/phpunit": "^11"
   },
-  "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
       "Nocarrier\\": "src"
@@ -29,8 +28,5 @@
     "psr-4": {
       "Nocarrier\\Tests\\": "tests/Hal"
     }
-  },
-  "config": {
-    "bin-dir": "bin"
   }
 }

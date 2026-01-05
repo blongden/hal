@@ -21,7 +21,7 @@ class XmlHalFactory
         if (!$data instanceof \SimpleXMLElement) {
             try {
                 $data = new \SimpleXMLElement($data);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 throw new \RuntimeException('The $data parameter must be valid XML');
             }
         }
@@ -37,17 +37,17 @@ class XmlHalFactory
         $hal->setData((array) $children);
         foreach ($links as $links) {
             if (!is_array($links)) {
-                $links = array($links);
+                $links = [$links];
             }
             foreach ($links as $link) {
-                list($rel, $href, $attributes) = self::extractKnownData($link);
+                [$rel, $href, $attributes] = self::extractKnownData($link);
                 $hal->addLink($rel, $href, $attributes);
             }
         }
 
         if ($depth > 0) {
             foreach ($embedded as $embed) {
-                list($rel, $href, $attributes) = self::extractKnownData($embed);
+                [$rel, $href, $attributes] = self::extractKnownData($embed);
                 $hal->addResource($rel, self::fromXml($embed, $depth - 1));
             }
         }
@@ -63,6 +63,6 @@ class XmlHalFactory
         $href = $attributes['href'];
         unset($attributes['rel'], $attributes['href']);
 
-        return array($rel, $href, $attributes);
+        return [$rel, $href, $attributes];
     }
 }

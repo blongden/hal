@@ -37,8 +37,8 @@ class HalLinkContainer extends \ArrayObject
 
         if (isset($this['curies'])) {
             foreach ($this['curies'] as $link) {
-                $prefix = strstr($link->getUri(), '{rel}', true);
-                if (strpos($rel, $prefix) === 0) {
+                $prefix = strstr((string) $link->getUri(), '{rel}', true);
+                if (str_starts_with($rel, $prefix)) {
                     // looks like it is
                     $shortrel = substr($rel, strlen($prefix));
                     $attrs = $link->getAttributes();
